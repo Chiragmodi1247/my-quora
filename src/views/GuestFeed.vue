@@ -28,23 +28,13 @@
     </div>
     <div v-if="cat" class="center-cont">
       <h1>Some popular Categories for guest only</h1>
-        <v-row>
-          <v-col lg="3">
-            <Category />
-          </v-col>
-          <v-col lg="3">
-            <Category />
-          </v-col>
-          <v-col lg="3">
-            <Category />
-          </v-col>
-          <v-col lg="3">
-            <Category />
-          </v-col>
-          <v-col lg="3">
-            <Category />
-          </v-col>
-        </v-row>
+      <v-row
+        class="small-category"
+        v-for="(category, index) in categoryList"
+        v-bind:key="index"
+      >
+        <Category :category="category" />
+      </v-row>
     </div>
   </div>
 </template>
@@ -60,7 +50,39 @@ export default {
   },
   data: function() {
     return {
-      cat: false
+      cat: false,
+      categoryList: [
+        {
+          name: "Literature"
+        },
+        {
+          name: "Lifestyle(Brands)"
+        },
+        {
+          name: "Movies"
+        },
+        {
+          name: "Coding"
+        },
+        {
+          name: "Booze"
+        },
+        {
+          name: "Cartoon"
+        },
+        {
+          name: "Cricket"
+        },
+        {
+          name: "Web/TV Series"
+        },
+        {
+          name: "Politics"
+        },
+        {
+          name: "Food"
+        }
+      ]
     };
   }
 };
@@ -69,6 +91,9 @@ export default {
 <style scoped>
 .cat-btn {
   padding: 22px;
+}
+.small-category {
+  width: 100%;
 }
 .login-btn {
   padding: 5px 20px 5px 20px;

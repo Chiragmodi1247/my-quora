@@ -5,6 +5,7 @@ import UserFeed from '../views/UserFeed.vue';
 import QuestionPage from '../views/QuestionPage.vue';
 import UserProfile from '../views/UserProfile.vue';
 import MyProfile from '../views/MyProfile.vue'
+import CategoryPage from '../views/CategoryPage.vue' 
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,11 @@ const routes = [
     path: "/myprofile",
     name: "myprofile",
     component: MyProfile
+  },
+  {
+    path: "/categorypage/:name",
+    name: "categorypage",
+    component: CategoryPage
   }
 ];
 
