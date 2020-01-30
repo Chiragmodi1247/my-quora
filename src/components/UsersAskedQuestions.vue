@@ -3,9 +3,9 @@
     <table>
       <tr>
         <td colspan="6">
-          <a href="">
-            <h2 style="color: black">How about answering this question?</h2>
-          </a>
+        <router-link :to="{ path: '/question/'+question_prop.id}">
+            <h2 style="color: black">{{question_prop.question}}</h2>
+        </router-link>
         </td>
         <td style="float: right">
           <span class="mdi mdi-dots-vertical"></span>
@@ -120,6 +120,9 @@ export default {
       upVoted: false,
       downVoted: false
     };
+  },
+  props: {
+    question_prop: Object
   }
 };
 </script>

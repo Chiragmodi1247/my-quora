@@ -1,21 +1,23 @@
 <template>
   <div>
     <div class="left-div">
-      <v-row>
-        <button @click="openModal" class="login-btn">
-          <h2>Ask Question</h2>
-        </button>
-      </v-row>
-      <v-row>
-        <button @click="cat = false">
-          <h2>Home</h2>
-        </button>
-      </v-row>
-      <v-row>
-        <button @click="cat = true">
-          <h2>Categories</h2>
-        </button>
-      </v-row>
+      <button @click="openModal" class="login-btn">
+        <h2>Ask Question</h2>
+      </button>
+
+      <ul>
+        <li>
+          <button @click="cat = false">
+            <h2>Home</h2>
+          </button>
+        </li>
+
+        <li>
+          <button @click="cat = true">
+            <h2>Categories</h2>
+          </button>
+        </li>
+      </ul>
     </div>
     <div class="center-cont">
       <h1>Some popular stories for Specific user</h1>

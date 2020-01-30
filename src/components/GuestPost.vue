@@ -2,7 +2,7 @@
   <v-card  rounded outlined style="margin-bottom:10px;padding:10px">
     <table>
       <tr>
-        <td @click="my_icon_click">
+        <td >
           <v-img
             src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=639&q=80"
             alt="MyDog"
@@ -18,9 +18,9 @@
       </tr>
       <tr>
         <td colspan="6">
-          <a href="">
-            <h2 style="color: black">How about answering this question?</h2>
-          </a>
+        <router-link :to="{ path: '/question/'+question_prop.id}">
+            <h2 style="color: black">{{question_prop.question}}</h2>
+        </router-link>
         </td>
       </tr>
       <tr>
@@ -76,6 +76,9 @@
 export default {
   name: "GuestPost",
   components: {},
+  props: {
+    question_prop: Object
+  },
   methods: {
     my_card() {
       alert("You clicked icon");

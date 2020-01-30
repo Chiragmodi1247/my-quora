@@ -11,11 +11,15 @@
           </router-link>
         </v-col>
         <v-col lg="6">
-          <input type="text" class="input-box" />
+          <input type="text" id="search_text" v-model="search_text" v-on:keyup="search" class="input-box" />
         </v-col>
-        <v-col lg="3"> </v-col>
+        <v-col lg="2"> </v-col>
+        <v-col lg="1" @click="openNotification">
+          <span v-if="!haveNotification" class="mdi mdi-bell-outline icon_size"></span>
+          <span v-if="haveNotification" class="mdi mdi-bell-outline red_icon_size">2</span>
+          </v-col>
         <v-col lg="1">
-          <router-link to="/myprofile">
+          <router-link to="/login">
             <button class="login-btn">
               <h2>Login</h2>
             </button>
@@ -83,12 +87,38 @@ export default {
   },
 
   data: () => ({
-    isLogged: true
-  })
+    isLogged: true,
+    search_text: null,
+    haveNotification: false,
+  }),
+  methods: {
+    search: function(e) {
+      let search_input = document.getElementById("search_text");
+      if (e.keyCode === 13) {
+        if (search_input.value.length === 0) alert("No input");
+        else{
+         window.console.log("Searched Query: " + this.search_text);
+          this.$router.push({path: '/search' , query: { searchQuery : this.search_text }})
+        }
+      }
+    },
+    openNotification: function() {
+      this.$router.push({path: '/notifications'})
+    }
+  }
 };
 </script>
 
 <style scoped>
+.red_icon_size {
+  font-size: 24pt;
+  cursor: pointer;
+  color: red;
+}
+.icon_size {
+  font-size: 24pt;
+  cursor: pointer;
+}
 .input-box {
   font-size: 20pt;
   border: 1px solid black;

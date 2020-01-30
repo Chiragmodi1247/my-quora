@@ -1,30 +1,31 @@
 <template>
   <div>
     <div class="left-div">
-      <v-row>
-        <button class="login-btn">
-          <h2>Ask Question</h2>
-        </button>
-      </v-row>
-      <v-row>
-        <button @click="cat = false">
-          <h2>Home</h2>
-        </button>
-      </v-row>
-      <v-row>
-        <button @click="cat = true">
-          <h2>Categories</h2>
-        </button>
-      </v-row>
+      <button class="login-btn">
+        <h2>Ask Question</h2>
+      </button>
+      <ul>
+        <li>
+          <button @click="cat = false">
+            <h2>Home</h2>
+          </button>
+        </li>
+
+        <li>
+          <button @click="cat = true">
+            <h2>Categories</h2>
+          </button>
+        </li>
+      </ul>
     </div>
     <div v-if="!cat" class="center-cont">
       <h1>Some popular stories for guest only</h1>
-      <GuestPost />
-      <GuestPost />
-      <GuestPost />
-      <GuestPost />
-      <GuestPost />
-      <GuestPost />
+
+      <GuestPost
+        v-for="(question, index) in questionList"
+        v-bind:key="index"
+        :question_prop="question"
+      />
     </div>
     <div v-if="cat" class="center-cont">
       <h1>Some popular Categories for guest only</h1>
@@ -81,6 +82,44 @@ export default {
         },
         {
           name: "Food"
+        }
+      ],
+      questionList: [
+        {
+          id: 1,
+          question: "What is the most life changing book you've ever read?",
+          category: "Literature"
+        },
+        {
+          id: 2,
+          question: "Was China cited in Indian literature?",
+          category: "Literature"
+        },
+        {
+          id: 3,
+          question: "What books are on your to read list for 2020?",
+          category: "Literature"
+        },
+        {
+          id: 4,
+          question: "What are the most philosophical cartoons?",
+          category: "Cartoon"
+        },
+        {
+          id: 5,
+          question: "What's your favorite 'programming' cartoon or comic?",
+          category: "Cartoon"
+        },
+        {
+          id: 6,
+          question: "What are some of the strangest facts about famous movies?",
+          category: "Movies"
+        },
+        {
+          question:
+            "What is the best movie you have seen that most people probably haven’t ever heard of?",
+          id: 7,
+          category: "Movies"
         }
       ]
     };

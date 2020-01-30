@@ -2,21 +2,6 @@
   <v-card rounded outlined style="margin-bottom:10px;padding:10px">
     <table>
       <tr>
-        <td>
-          <v-img
-            src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=639&q=80"
-            alt="MyDog"
-            max-width="30px"
-            max-height="30px"
-            style="border-radius: 50%"
-          >
-          </v-img>
-        </td>
-        <td>
-          Some User info who has asked this question here
-        </td>
-      </tr>
-      <tr>
         <td colspan="6">
           <a href="">
             <h2 style="color: black">How about answering this question?</h2>
@@ -70,13 +55,12 @@
         </div>
       </tr>
 
-<tr>
-    <span class="mdi mdi-thumb-up-outline"></span>
-    45
-    <span class="mdi mdi-thumb-down-outline"></span>
-    45
-</tr>
-
+      <tr>
+        <span class="mdi mdi-thumb-up-outline"></span>
+        45
+        <span class="mdi mdi-thumb-down-outline"></span>
+        45
+      </tr>
     </table>
 
     <v-divider></v-divider>
@@ -160,6 +144,10 @@ export default {
       ]
     };
   },
+  props: {
+    question_prop: Object
+  },
+
   methods: {
     my_card() {
       alert("You clicked icon");

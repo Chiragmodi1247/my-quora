@@ -6,14 +6,9 @@
           <h2>Ask Question</h2>
         </button>
       </v-row>
-      <v-row>
-        <button>
-          <h2>Categories</h2>
-        </button>
-      </v-row>
     </div>
     <div class="center-cont">
-            <h1 style="color: black">How about answering this question?</h1>
+            <h1 style="color: black">{{questionID}}  This question will be fetched using ID</h1>
       <UserQuestion />
       <UserQuestion />
       <UserQuestion />
@@ -27,6 +22,11 @@ export default {
   name: "home",
   components: {
     UserQuestion
+  },
+  data: function() {
+    return {
+    questionID: this.$route.params.id
+    }
   }
 };
 </script>

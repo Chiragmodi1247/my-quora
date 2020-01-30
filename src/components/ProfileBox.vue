@@ -29,7 +29,7 @@
       </v-col>
       <v-col lg="2">
         <br /><br /><br />
-        <button class="btn_send">
+        <button class="btn_send" @click="send_request">
           Follow <span class="mdi mdi-account-plus"></span>
         </button>
       </v-col>
@@ -38,7 +38,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    send_request: function() {
+      alert("Request to user send, wait to reply")
+    }
+  }
+};
 </script>
 
 <style scoped>
