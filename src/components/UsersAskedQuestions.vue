@@ -3,9 +3,9 @@
     <table>
       <tr>
         <td colspan="6">
-        <router-link :to="{ path: '/question/'+question_prop.id}">
-            <h2 style="color: black">{{question_prop.question}}</h2>
-        </router-link>
+          <router-link :to="{ path: '/question/' + question_prop.id }">
+            <h2 style="color: black">{{ question_prop.question }}</h2>
+          </router-link>
         </td>
         <td style="float: right">
           <span class="mdi mdi-dots-vertical"></span>
@@ -98,16 +98,25 @@
           </button>
         </td>
       </tr>
+      <tr class="comment_section">
+        <Comment
+          v-for="comment in commentData"
+          :key="comment"
+          :node="comment"
+        />
+      </tr>
     </table>
   </v-card>
 </template>
 
 <script>
 // @ is an alias to /src
-
+import Comment from "../components/Comment";
 export default {
   name: "GuestPost",
-  components: {},
+  components: {
+    Comment
+  },
   methods: {
     my_card() {
       alert("You clicked icon");
@@ -118,7 +127,96 @@ export default {
       upCount: 10,
       downCount: 5,
       upVoted: false,
-      downVoted: false
+      downVoted: false,
+      commentData: [
+        {
+          comment: "Comment1",
+          like: 45,
+          dislike: 20,
+          children: [
+            {
+              comment: "Comment11",
+              like: 15,
+              dislike: 10,
+              children: [
+                {
+                  comment: "Comment111",
+                  like: 0,
+                  dislike: 0
+                },
+                {
+                  comment: "Comment112",
+                  like: 5,
+                  dislike: 20
+                }
+              ]
+            },
+            {
+              comment: "Comment12",
+              like: 35,
+              dislike: 20
+            }
+          ]
+        },
+        {
+          comment: "Comment2",
+          like: 5,
+          dislike: 3,
+          children: [
+            {
+              comment: "Comment21",
+              like: 45,
+              dislike: 20,
+              children: [
+                {
+                  comment: "Comment211",
+                  like: 45,
+                  dislike: 20
+                },
+                {
+                  comment: "Comment212",
+                  like: 45,
+                  dislike: 20
+                }
+              ]
+            },
+            {
+              comment: "Comment22",
+              like: 45,
+              dislike: 20
+            }
+          ]
+        },
+        {
+          comment: "Comment3",
+          like: 0,
+          dislike: 0,
+          children: [
+            {
+              comment: "Comment31",
+              like: 45,
+              dislike: 20,
+              children: [
+                {
+                  comment: "Comment311",
+                  like: 45,
+                  dislike: 20
+                },
+                {
+                  comment: "Comment312",
+                  like: 45,
+                  dislike: 20
+                }
+              ]
+            },
+            {
+              comment: "Comment32",
+              like: 45,
+              dislike: 20
+            }
+          ]
+        }
+      ]
     };
   },
   props: {
@@ -128,6 +226,9 @@ export default {
 </script>
 
 <style scoped>
+.comment_section {
+  background: rgb(184, 184, 184);
+}
 .my-row {
   padding: 0;
 }

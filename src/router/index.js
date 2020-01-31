@@ -8,7 +8,8 @@ import MyProfile from '../views/MyProfile.vue';
 import CategoryPage from '../views/CategoryPage.vue';
 import SearchResult from '../views/SearchResult.vue' 
 import Login from '../views/Login.vue';
-import Notifications from '../views/Notifications.vue'
+import Notifications from '../views/Notifications.vue';
+import Registration from '../views/register.vue'
 
 Vue.use(VueRouter);
 
@@ -63,6 +64,11 @@ const routes = [
     path: '/notifications',
     name: 'Notifications',
     component: Notifications
+  },
+  {
+    path: '/registration',
+    name: 'registration',
+    component: Registration
   }
 ];
 

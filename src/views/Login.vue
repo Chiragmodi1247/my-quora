@@ -8,10 +8,10 @@
       <v-row>
         <v-col lg="2"></v-col>
         <v-col lg="1">
-          <span class="mdi mdi-account icon_size"></span>
+          <span class="mdi mdi-email icon_size"></span>
         </v-col>
         <v-col lg="1">
-          <input type="text" class="input_box" placeholder="Email..." />
+          <input type="email" class="input_box" placeholder="Email..." />
         </v-col>
       </v-row>
       <v-row>
@@ -44,7 +44,16 @@
           <span class="mdi mdi-account icon_size"></span>
         </v-col>
         <v-col lg="1">
-          <input type="text" class="input_box" placeholder="Email..." />
+          <input type="text" class="input_box" id="regester_username" placeholder="Username..." />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col lg="2"></v-col>
+        <v-col lg="1">
+          <span class="mdi mdi-email icon_size"></span>
+        </v-col>
+        <v-col lg="1">
+          <input type="text" class="input_box" id="regester_email" placeholder="Email..." />
         </v-col>
       </v-row>
       <v-row>
@@ -53,31 +62,51 @@
           <span class="mdi mdi-lock icon_size"></span>
         </v-col>
         <v-col lg="1">
-          <input type="password" class="input_box" placeholder="Password" />
+          <input type="password" class="input_box" id="regester_pass" placeholder="Password" />
         </v-col>
       </v-row>
       <v-row>
-        <v-col>
-          <p>Select Profile*</p>
-          <label>
-            <input id="rd1" type="radio" name="profiletype" value="private" /> Private 
-          </label>
-          <label>
-            <input id="rd2" type="radio" name="profiletype" value="public" /> Public 
-          </label>
-          <label>
-            <input id="rd3" type="radio" name="profiletype" value="org" /> Business 
-          </label>
-          <!-- <v-radio-group v-model="radioGroup">
-            <v-radio label="Public" value="1"> </v-radio>
-            <v-radio label="Private" value="2"> </v-radio>
-            <v-radio label="Organization" value="3"> </v-radio>
-          </v-radio-group> -->
+        <v-col lg="2"></v-col>
+        <v-col lg="1">
+          <span class="mdi mdi-lock icon_size"></span>
+        </v-col>
+        <v-col lg="1">
+          <input
+            type="password"
+            class="input_box"
+            id="regester_cpass"
+            placeholder="Confirm Password"
+          />
         </v-col>
       </v-row>
+
+      <h2>Please Choose minimum 2 categories:</h2>
+      <input type="checkbox" name="cat1" class="my-checkbox" value="Bike" />
+      Literature
+      <input type="checkbox" name="cat2" class="my-checkbox" value="Car" />
+      Lifestyle(Brands)
+      <input type="checkbox" name="cat3" class="my-checkbox" value="Boat" />
+      Movies <br />
+      <input type="checkbox" name="cat4" class="my-checkbox" value="Bike" />
+      Coding
+      <input type="checkbox" name="cat5" class="my-checkbox" value="Car" />
+      Booze
+      <input type="checkbox" name="cat6" class="my-checkbox" value="Boat" />
+      Cartoon <br />
+      <input type="checkbox" name="cat7" class="my-checkbox" value="Bike" />
+      Cricket
+      <input type="checkbox" name="cat8" class="my-checkbox" value="Car" />
+      Web/TV Series
+      <input type="checkbox" name="cat9" class="my-checkbox" value="Boat" />
+      Politics
+      <input type="checkbox" name="cat10" class="my-checkbox" value="Boat" />
+      Food
+
       <v-row>
         <v-col>
-          <button class="login_btn" @click="registerUser"><h2>Register</h2></button>
+          <button class="login_btn" @click="registerUser">
+            <h2>Proceed for Registeration</h2>
+          </button>
         </v-col>
       </v-row>
       <v-row>
@@ -105,19 +134,41 @@ export default {
       this.forLogin = !this.forLogin;
     },
     registerUser: function() {
-        
-        let rd1 = document.getElementById("rd1");
-        let rd2 = document.getElementById("rd2");
-        let rd3 = document.getElementById("rd3");
+      let inputList = document.getElementsByClassName("my-checkbox");
+      let numChecked = 0;
+      let usernameInput = document.getElementById("regester_username");
+      let emailInput = document.getElementById("regester_email");
+      let passwordInput = document.getElementById("regester_pass")
+      let cpasswordInput = document.getElementById("regester_cpass")
+      let selectedInterest = new Array();
+      
+      if(usernameInput.value.length === 0 || emailInput.value.length === 0 || passwordInput.value.length === 0 || cpasswordInput.value.length === 0){
+        alert("Please fill all fields")
+        return;
+      }
 
-        if(rd1.checked == true)
-        window.console.log("Selected value: "+ rd1.value)
-        else if(rd2.checked == true)
-        window.console.log("Selected value: "+ rd2.value)
-        else if(rd3.checked == true)
-        window.console.log("Selected value: "+ rd3.value)
-        else
-        alert("Not selected")
+
+
+      if(passwordInput.value !== cpasswordInput.value)
+      {
+        alert("Password does not match")
+        return;
+      }
+      for (var i = 0; i < inputList.length; i++) {
+        if (inputList[i].type == "checkbox" && inputList[i].checked) {
+          numChecked = numChecked + 1;
+          selectedInterest.push(inputList[i].value)
+        }
+      }
+
+      if (numChecked < 2) {
+        alert("Select minimum 2 categories");
+        return;
+      } 
+      window.console.log("Selected: "+ JSON.stringify( selectedInterest))
+      // alert("selected count: " + numChecked);
+
+      this.$router.push({ path: "/registration" });
     }
   }
 };

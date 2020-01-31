@@ -60,6 +60,7 @@
       <div class="center-cont">
         <textarea
           id="asking_new_question"
+          @input="enable_ask"
           class="asking_new_question_onprofile"
           placeholder="Ask me a question"
         ></textarea>
@@ -72,7 +73,7 @@
           <option value="">Category 5</option>
         </select>
 
-        <button :disabled="!selected" class="btn_send">
+        <button :disabled="!selected || !txtselected" class="btn_send">
           Ask <span class="mdi mdi-send"></span>
         </button>
         <div v-if="feed.questions">
@@ -134,8 +135,9 @@ export default {
         followings: false
       },
       selected: false,
+      txtselected: false,
       canSee: true,
-            questionList: [
+      questionList: [
         {
           id: 1,
           question: "What is the most life changing book you've ever read?",
@@ -173,8 +175,14 @@ export default {
           category: "Movies"
         }
       ]
-
     };
+  },
+  methods: {
+    enable_ask() {
+      let que = document.getElementById("asking_new_question");
+      if (que.value.length !== 0) this.txtselected = true;
+      if (que.value.length === 0) this.txtselected = false;
+    }
   }
 };
 </script>
