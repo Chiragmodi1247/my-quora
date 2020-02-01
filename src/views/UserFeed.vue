@@ -19,21 +19,34 @@
         </li>
       </ul>
     </div>
-    <div class="center-cont">
+    <div v-if="!cat" class="center-cont">
       <h1>Some popular stories for Specific user</h1>
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
+      <UserPost
+        v-for="(question, index) in questionList"
+        v-bind:key="index"
+        :question_prop="question"
+      />
     </div>
+
+    <div v-if="cat" class="center-cont">
+      <h1>User specific Categories</h1>
+      <v-row
+        class="small-category"
+        v-for="(category, index) in userCategoryList"
+        v-bind:key="index"
+      >
+        <Category :category="category" />
+      </v-row>
+    </div>
+
     <div id="simpleModal" class="modal">
       <div class="modal-content">
         <span id="closeBtn" @click="closeModal">&times; </span>
         <v-row>
           <textarea
             id="asking_new_question"
+            @input="enable_ask"
+            v-on:keyup="ask_on_enter"
             class="asking_new_question_onprofile"
             placeholder="Ask a question"
           ></textarea>
@@ -41,16 +54,26 @@
         <v-row>
           <v-col>
             <span style="color: red">Please Select a category: </span>
-            <select @click="selected = true" class="cat-select">
-              <option value="">Category 1</option>
-              <option value="">Category 2</option>
-              <option value="">Category 3</option>
-              <option value="">Category 4</option>
-              <option value="">Category 5</option>
+            <select
+              v-model="selectedCat"
+              @click="selected = true"
+              id="ask_select_option"
+              class="cat-select"
+            >
+              <option
+                v-for="(cat, index) in askCategoryList"
+                :key="index"
+                :value="cat"
+                >{{ cat }}</option
+              >
             </select>
           </v-col>
           <v-col>
-            <button :disabled="!selected" class="btn_send">
+            <button
+              :disabled="!selected || !txtInput"
+              @click="askToProfile"
+              class="btn_send"
+            >
               Ask <span class="mdi mdi-send"></span>
             </button>
           </v-col>
@@ -61,19 +84,133 @@
 </template>
 
 <script>
+// const axios = require('axios').default;
 import UserPost from "../components/UserPost";
+import Category from "../components/Category";
 export default {
   name: "home",
   components: {
-    UserPost
+    UserPost,
+    Category
   },
   data: function() {
     return {
-      selected: false
+      selected: false,
+      txtInput: false,
+      cat: false,
+      questionList: [],
+      userCategoryList: [],
+      askCategoryList: [],
+      selectedCat: null,
+      addQDTO: {
+        questionValue: null,
+        categoryId: null,
+        categoryName: null,
+        // askerProfileId: null,
+        // askerProfileName: null,
+        profileWhereAskedId: null,
+        profileWhereAskedName: null,
+        profileWhereAskedType: "Public"
+      },
+      categoryList: [
+        {
+          name: "Literature"
+        },
+        {
+          name: "Lifestyle(Brands)"
+        },
+        {
+          name: "Movies"
+        },
+        {
+          name: "Coding"
+        },
+        {
+          name: "Booze"
+        },
+        {
+          name: "Cartoon"
+        },
+        {
+          name: "Cricket"
+        },
+        {
+          name: "Web/TV Series"
+        },
+        {
+          name: "Politics"
+        },
+        {
+          name: "Food"
+        }
+      ]
     };
+  },
+  created() {
+    // let that = this;
+fetch("/backend/profile/category/", {
+      headers: {
+        token: localStorage.getItem("quora-token"),
+        "Content-Type": "application/json"
+      },
+
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.userCategoryList = result;
+        window.console.log("My data: " + result[1].interestName);
+        // axios.get('/backend/questions/getQuestionsOfSelectedCategories', this.userCategoryList)
+        // axios({
+        //   url:'/backend/questions/getQuestionsOfSelectedCategories',
+        //   method: 'get',        
+        //   data:this.categoryList
+        // })
+        fetch("/backend/questions/getQuestionsOfSelectedCategories", {
+          headers: {
+            token: localStorage.getItem("quora-token"),
+            "Content-Type": "application/json"
+          },
+          method: "POST",
+          body: JSON.stringify(this.userCategoryList)
+        })
+          .then(res => {
+            return res.json();
+          })
+          .then(result => {
+            this.questionList = result.content;
+            window.console.log("My questions: " + result.content);
+          })
+          .catch(
+            window.console.log("error in fetching question!")
+          );
+      });
+
+    fetch("http://172.16.20.83:8080/ads/tags")
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.askCategoryList = result;
+        window.console.log("result: " + result);
+        // window.console.log("My Tags: " + this.askCategoryList);
+      })
+      .catch(err => {
+        window.console.log("Error getting tags: " + err);
+      });
   },
 
   methods: {
+    ask_on_enter() {
+      window.console.log("Ask on enter called");
+    },
+    enable_ask() {
+      let newQ = document.getElementById("asking_new_question");
+      if (newQ.value.length === 0) return;
+      this.txtInput = true;
+    },
     openModal() {
       // let modalBtn = document.getElementById("edit_profile");
 
@@ -84,6 +221,23 @@ export default {
     closeModal() {
       let modal = document.getElementById("simpleModal");
       modal.style.display = "none";
+    },
+    askToProfile() {
+      let newQ = document.getElementById("asking_new_question");
+
+      this.addQDTO.questionValue = newQ.value;
+      this.addQDTO.categoryId = this.selectedCat;
+      this.addQDTO.categoryName = this.selectedCat;
+
+      fetch("/backend/questions/addQuestion", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.addQDTO)
+      }).catch(window.console.log("error adding question"));
+      alert("Question: " + newQ.value + " on cat: " + this.selectedCat);
     }
   }
 };

@@ -18,8 +18,8 @@
       </tr>
       <tr>
         <td colspan="6">
-        <router-link :to="{ path: '/question/'+question_prop.id}">
-            <h2 style="color: black">{{question_prop.question}}</h2>
+        <router-link :to="{ path: '/question/'+question_prop.questionId}">
+            <h2 style="color: black">{{question_prop.questionValue}}</h2>
         </router-link>
         </td>
       </tr>
@@ -35,10 +35,7 @@
           </v-img>
         </td>
         <td>
-          <p>
-            Some more desc here. My answer might be disturbing to some. I have
-            been looking forward to writing this for a long time, but couldn’t
-            had a job and my mom was
+          <p>{{question_prop.approvedAnswererProfile}}
           </p>
         </td>
       </tr>
@@ -47,21 +44,7 @@
     <table>
       <tr>
         <div class="ans">
-          <p>
-            My answer might be disturbing to some. I have been looking forward
-            to writing this for a long time, but couldn’t muster up the courage
-            as it was very hurtful and disturbing to me.I was born in India and
-            brought up in a middle class family. My dad had a job and my mom was
-            a home maker. My mom gave birth to me and my brother via C-Section
-            and she suffers from severe back pain due to the complications she
-            suffered during the surgeries. I was born prematurely at 7.5 months,
-            My answer might be disturbing to some. I have been looking forward
-            to writing this for a long time, but couldn’t muster up the courage
-            as it was very hurtful and disturbing to me.I was born in India and
-            brought up in a middle class family. My dad had a job and my mom was
-            a home maker. My mom gave birth to me and my brother via C-Section
-            which made it worse for her. She was unable to stand for a long time
-            and couldn’t manage even the basic household work.
+          <p>{{question_prop.approvedAnswer}}
           </p>
         </div>
       </tr>

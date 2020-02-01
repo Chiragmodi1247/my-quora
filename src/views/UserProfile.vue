@@ -60,6 +60,7 @@
       <div class="center-cont">
         <textarea
           id="asking_new_question"
+          @input="enable_ask"
           class="asking_new_question_onprofile"
           placeholder="Ask me a question"
         ></textarea>
@@ -72,7 +73,7 @@
           <option value="">Category 5</option>
         </select>
 
-        <button :disabled="!selected" class="btn_send">
+        <button :disabled="!selected || !txtselected" class="btn_send">
           Ask <span class="mdi mdi-send"></span>
         </button>
         <div v-if="feed.questions">
@@ -134,47 +135,56 @@ export default {
         followings: false
       },
       selected: false,
+      txtselected: false,
       canSee: true,
-            questionList: [
+      questionList: [
         {
-          id: 1,
+          id: "211",
           question: "What is the most life changing book you've ever read?",
           category: "Literature"
         },
         {
-          id: 2,
+          id: "212",
           question: "Was China cited in Indian literature?",
           category: "Literature"
         },
         {
-          id: 3,
+          id: "213",
           question: "What books are on your to read list for 2020?",
           category: "Literature"
         },
         {
-          id: 4,
+          id: "214",
           question: "What are the most philosophical cartoons?",
           category: "Cartoon"
         },
         {
-          id: 5,
+          id: "215",
           question: "What's your favorite 'programming' cartoon or comic?",
           category: "Cartoon"
         },
         {
-          id: 6,
+          id: "216",
           question: "What are some of the strangest facts about famous movies?",
           category: "Movies"
         },
         {
           question:
             "What is the best movie you have seen that most people probably haven’t ever heard of?",
-          id: 7,
+          id: "217",
           category: "Movies"
         }
       ]
-
     };
+  },
+  methods: {
+    enable_ask() {
+      let que = document.getElementById("asking_new_question");
+      if (que.value.length !== 0) {
+        this.txtselected = true;
+      }
+      if (que.value.length === 0) this.txtselected = false;
+    }
   }
 };
 </script>

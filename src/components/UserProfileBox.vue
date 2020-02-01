@@ -10,7 +10,7 @@
       <v-col lg="7" style="color: white">
         <br /><br /><br />
         <v-row>
-          <h1>MY name here</h1>
+          <h1>{{profile.name}}</h1>
         </v-row>
         <v-row>
           My some basic description here
@@ -23,7 +23,7 @@
             Following: 20
           </v-col>
           <v-col lg="4">
-            Level: Gold
+            Level: {{profile.level}}
           </v-col>
         </v-row>
       </v-col>
@@ -62,6 +62,9 @@ export default {
       let modal = document.getElementById("simpleModal");
       modal.style.display = "none";
     }
+  },
+  props: {
+    profile: Object
   }
 };
 </script>

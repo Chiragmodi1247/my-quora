@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="my-profile">
-      <UserProfileBox />
+      <UserProfileBox :profile="myDetails" />
     </div>
 
     <div class="left-div">
@@ -59,10 +59,10 @@
     <div class="center-cont">
       <div v-if="feed.questions">
         <h1 style="color: black">My questions here</h1>
-        <UserAskedQuestion 
-        v-for="(question, index) in questionList"
-        v-bind:key="index"
-        :question_prop="question"
+        <UserAskedQuestion
+          v-for="(question, index) in questionList"
+          v-bind:key="index"
+          :question_prop="question"
         />
       </div>
 
@@ -74,20 +74,12 @@
       </div>
       <div v-if="feed.followers">
         <h1 style="color: black">My followers here</h1>
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
+        <SmallProfile v-for="(follower,index) in myFollowers" :key="index" :mydata="follower"/>
       </div>
 
       <div v-if="feed.followings">
         <h1 style="color: black">My followings here</h1>
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
+        <SmallProfile v-for="(following,index) in myFollowings" :key="index" :mydata="following"/>
       </div>
     </div>
   </div>
@@ -108,6 +100,9 @@ export default {
   },
   data: function() {
     return {
+      myDetails: {},
+      myFollowers: [],
+      myFollowings: [],
       feed: {
         questions: true,
         answers: false,
@@ -117,44 +112,80 @@ export default {
       selected: false,
       questionList: [
         {
-          id: 1,
+          id: "1",
           question: "What is the most life changing book you've ever read?",
           category: "Literature"
         },
         {
-          id: 2,
+          id: "2",
           question: "Was China cited in Indian literature?",
           category: "Literature"
         },
         {
-          id: 3,
+          id: "3",
           question: "What books are on your to read list for 2020?",
           category: "Literature"
         },
         {
-          id: 4,
+          id: "4",
           question: "What are the most philosophical cartoons?",
           category: "Cartoon"
         },
         {
-          id: 5,
+          id: "5",
           question: "What's your favorite 'programming' cartoon or comic?",
           category: "Cartoon"
         },
         {
-          id: 6,
+          id: "6",
           question: "What are some of the strangest facts about famous movies?",
           category: "Movies"
         },
         {
           question:
             "What is the best movie you have seen that most people probably haven’t ever heard of?",
-          id: 7,
+          id: "7",
           category: "Movies"
         }
       ]
     };
-  }
+  },
+  created() {
+    fetch("http://172.16.20.119:8080/profile/profile/320", {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.myDetails = result;
+        window.console.log("Details: " + result);
+      });
+
+    fetch("http://172.16.20.119:8080/profile/follower/320", {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.myFollowers = result;
+        window.console.log("Details: " + result);
+      });
+
+    fetch("http://172.16.20.119:8080/profile/following/320", {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.myFollowings = result;
+        window.console.log("Details: " + result);
+      });
+
+
+}
 };
 </script>
 

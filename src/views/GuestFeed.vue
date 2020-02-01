@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="left-div">
-      <button class="login-btn">
+      <button class="login-btn" @click="redirect_tologin">
         <h2>Ask Question</h2>
       </button>
       <ul>
@@ -34,7 +34,7 @@
         v-for="(category, index) in categoryList"
         v-bind:key="index"
       >
-        <Category :category="category" />
+        <GuestCategory :category="category" />
       </v-row>
     </div>
   </div>
@@ -42,12 +42,12 @@
 
 <script>
 import GuestPost from "../components/GuestPost";
-import Category from "../components/Category";
+import GuestCategory from "../components/GuestCategory";
 export default {
   name: "home",
   components: {
     GuestPost,
-    Category
+    GuestCategory
   },
   data: function() {
     return {
@@ -123,6 +123,23 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    redirect_tologin() {
+      this.$router.push({ path: "/login" });
+    }
+  },
+  created() {
+    fetch("/backend/questions/getAllQuestions", {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.questionList = result.content;
+        window.console.log("My data: " + result.content);
+      });
   }
 };
 </script>
