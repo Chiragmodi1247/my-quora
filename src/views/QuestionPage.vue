@@ -8,10 +8,11 @@
       </v-row>
     </div>
     <div class="center-cont">
-            <h1 style="color: black">{{questionID}}  This question will be fetched using ID</h1>
-      <UserQuestion />
-      <UserQuestion />
-      <UserQuestion />
+      <h1 style="color: black">
+        {{ questionValue }} 
+      </h1>
+
+      <UserQuestion v-for="(ans,index) in answers" :key="index" :ans="ans"/>
     </div>
   </div>
 </template>
@@ -21,12 +22,28 @@ import UserQuestion from "../components/UserQuestion";
 export default {
   name: "home",
   components: {
-    UserQuestion
+    UserQuestion,
   },
   data: function() {
     return {
-    questionID: this.$route.params.id
-    }
+      questionID: this.$route.params.id,
+      questionValue: null,
+      answers: []
+      };
+  },
+  created() {
+// window.console.log("http://10.177.68.235:8080/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`)
+    fetch("http://10.177.68.235:8080/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`, {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.questionValue = result.content[0].question;
+        this.answers = result.content;
+        window.console.log("My data: " + result.content[0].question);
+      });
   }
 };
 </script>

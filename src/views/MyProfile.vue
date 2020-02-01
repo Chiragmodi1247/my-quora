@@ -117,39 +117,39 @@ export default {
       selected: false,
       questionList: [
         {
-          id: 1,
+          id: "1",
           question: "What is the most life changing book you've ever read?",
           category: "Literature"
         },
         {
-          id: 2,
+          id: "2",
           question: "Was China cited in Indian literature?",
           category: "Literature"
         },
         {
-          id: 3,
+          id: "3",
           question: "What books are on your to read list for 2020?",
           category: "Literature"
         },
         {
-          id: 4,
+          id: "4",
           question: "What are the most philosophical cartoons?",
           category: "Cartoon"
         },
         {
-          id: 5,
+          id: "5",
           question: "What's your favorite 'programming' cartoon or comic?",
           category: "Cartoon"
         },
         {
-          id: 6,
+          id: "6",
           question: "What are some of the strangest facts about famous movies?",
           category: "Movies"
         },
         {
           question:
             "What is the best movie you have seen that most people probably haven’t ever heard of?",
-          id: 7,
+          id: "7",
           category: "Movies"
         }
       ]

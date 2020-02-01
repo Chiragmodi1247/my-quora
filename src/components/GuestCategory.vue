@@ -7,20 +7,12 @@
           <h2 class="cat-name">{{ category.name }}</h2>
         </router-link>
       </v-col>
-      <v-col lg="2">
-        <h2 @click="follow_cat" class="follow_btn">Follow <span class="mdi mdi-account-plus"></span></h2>
-      </v-col>
     </v-row>
   </v-card>
 </template>
 
 <script>
 export default {
-  methods:{
-    follow_cat() {
-      alert("Following: "+ this.category.name)
-    }
-  },
   props: {
     category: Object
   },
@@ -42,6 +34,5 @@ export default {
   text-align: center;
   background: blue;
   color: white;
-  cursor: pointer;
 }
 </style>

@@ -13,9 +13,7 @@
           </v-img>
         </td>
         <td>
-            Some more desc here. My answer might be disturbing to some. I have
-            been looking forward to writing this for a long time, but couldn’t
-            had a job and my mom was
+          {{ ans.profileNameOfAnswerer }}
         </td>
         <td style="float: right;">
           <span class="mdi mdi-dots-vertical"></span>
@@ -26,48 +24,14 @@
     <table>
       <tr>
         <div class="ans">
-          <p>
-            My answer might be disturbing to some. I have been looking forward
-            to writing this for a long time, but couldn’t muster up the courage
-            as it was very hurtful and disturbing to me.I was born in India and
-            brought up in a middle class family. My dad had a job and my mom was
-            a home maker. My mom gave birth to me and my brother via C-Section
-            and she suffers from severe back pain due to the complications she
-            suffered during the surgeries. I was born prematurely at 7.5 months,
-            My answer might be disturbing to some. I have been looking forward
-            to writing this for a long time, but couldn’t muster up the courage
-            as it was very hurtful and disturbing to me.I was born in India and
-            brought up in a middle class family. My dad had a job and my mom was
-            a home maker. My mom gave birth to me and my brother via C-Section
-            which made it worse for her. She was unable to stand for a long time
-            and couldn’t manage even the basic household work.
-          </p>
+          <p>{{ ans.answerValue }}</p>
         </div>
       </tr>
     </table>
 
     <v-divider></v-divider>
-    <table>
-      <tr>
-        <td>
-          <v-text-field
-            class="questrial input-box"
-            height="40px"
-            background-color="grey lighten-3"
-            placeholder="Write a comment..."
-            rounded
-          ></v-text-field>
-        </td>
-        <td>
-          <button class="btn_send">
-            Send <span class="mdi mdi-send"></span>
-          </button>
-        </td>
-      </tr>
-    </table>
 
     <h2>Older Comments</h2>
-    <ul id="commentsList"></ul>
   </v-card>
 </template>
 
@@ -77,60 +41,15 @@ export default {
   name: "GuestPost",
   components: {},
   data() {
-    return {
-      myComments: [
-        {
-          id: 0,
-          name: "Chirag",
-          handle: "@mchirag1247",
-          content: "I like this parent comment",
-          upvotes: 7,
-          downvotes: 2,
-          parentId: null
-        },
-        {
-          id: 1,
-          name: "Pratik",
-          handle: "@mchirag21",
-          content: "I like being child comment",
-          upvotes: 2,
-          downvotes: 0,
-          parentId: 0
-        },
-        {
-          id: 2,
-          name: "vedu",
-          handle: "@mvedu12",
-          content: "I like being grand child comment",
-          upvotes: 0,
-          downvotes: 0,
-          parentId: 1
-        },
-        {
-          id: 3,
-          name: "Shreya",
-          handle: "@shreyu",
-          content: "I like being a sibbling comment",
-          upvotes: 7,
-          downvotes: 2,
-          parentId: 0
-        },
-        {
-          id: 4,
-          name: "Dishu",
-          handle: "@mdishu000",
-          content: "I like this parent comment",
-          upvotes: 9,
-          downvotes: 0,
-          parentId: null
-        }
-      ]
-    };
+    return {};
   },
   methods: {
     my_card() {
       alert("You clicked icon");
     }
+  },
+  props: {
+    ans: Object
   }
   //   created() {
   //       let storeCmt = JSON.stringify(this.myComments)

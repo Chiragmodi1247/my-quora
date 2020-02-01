@@ -1,19 +1,30 @@
 <template>
   <v-card class="my-form">
     <div class="Login-title">
-      <h1 v-if="forLogin">Login</h1>
-      <h1 v-if="!forLogin">Register</h1>
+      <h1>Register</h1>
     </div>
     <div>
       <v-row>
         <v-col>
           <p>Select Profile Type <span style="color: red">*</span></p>
           <label>
-            <input id="rd1" type="radio" name="profiletype" value="private" />
+            <input
+              @click="selectPrivate"
+              id="rd1"
+              type="radio"
+              name="profiletype"
+              value="private"
+            />
             Private
           </label>
           <label>
-            <input id="rd2" type="radio" name="profiletype" value="public" />
+            <input
+              @click="selectPublic"
+              id="rd2"
+              type="radio"
+              name="profiletype"
+              value="public"
+            />
             Public
           </label>
         </v-col>
@@ -26,19 +37,63 @@
         </v-col>
       </v-row>
     </div>
+
+    <h2>Please Choose minimum 2 categories:</h2>
+    <!-- <v-row>
+      <v-col
+        lg="3"
+        v-for="(tag, index) in myTags"
+        :key="index"
+        class="my-checkbox"
+        :value="tag"
+      >
+        <span class="aTag" @click="addToList">{{ tag }}</span>
+      </v-col>
+    </v-row> -->
+
+    <v-row>
+      <v-col lg="3" v-for="(tag, index) in myTags" :key="index">
+        <input type="checkbox" class="my-checkbox" :value="tag" />{{ tag }}
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
 <script>
 export default {
   data: function() {
-    return {};
+    return {
+      myTags: [],
+      profileDTO: {
+        profile: null,
+        role: null,
+        channel: "Quora"
+      },
+      interestDTO: {
+        tag: ["movie","song"],
+        channel: "Quora",
+        action: "login"
+      }
+    };
   },
   methods: {
-    changeToRegistration: function() {
-      this.forLogin = !this.forLogin;
+    selectPublic: function() {
+      this.profileDTO.profile = "Public";
+      this.profileDTO.role = "Non Moderator";
+      window.console.log(
+        "profileDTO: " + this.profileDTO.profile + " " + this.profileDTO.role
+      );
+    },
+    selectPrivate: function() {
+      this.profileDTO.profile = "Private";
+      this.profileDTO.role = "Moderator";
+      window.console.log(
+        "profileDTO: " + this.profileDTO.profile + " " + this.profileDTO.role
+      );
     },
     registerUser: function() {
+      let regSuccess = false;
+      let catSuccess = false;
       let rd1 = document.getElementById("rd1");
       let rd2 = document.getElementById("rd2");
 
@@ -47,11 +102,104 @@ export default {
       else if (rd2.checked == true)
         window.console.log("Selected value: " + rd2.value);
       else {
-          alert("None selected");
-          return;
+        alert("None selected");
+        return;
       }
-      this.$router.push({ path: "/login" });
+
+      // let inputList = document.getElementsByClassName("my-checkbox");
+      // let numChecked = 0;
+      // let selectedInterest = new Array();
+
+      // for (var i = 0; i < inputList.length; i++) {
+      //   if (inputList[i].type == "checkbox" && inputList[i].checked) {
+      //     numChecked = numChecked + 1;
+      //     selectedInterest.push(inputList[i].value);
+      //   }
+      // }
+
+      // if (numChecked < 2) {
+      //   alert("Select minimum 2 categories");
+      //   return;
+      // }
+      // this.interestDTO.tag = selectedInterest;
+      fetch("http://172.16.20.121:8080/roleController/userRole", {
+        headers: {
+          accessToken:
+            "Bearer " +
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGlyYWcxMUBnbWFpbC5jb20iLCJ1c2VySWQiOiIwMTgyOTdlZS1mMTdkLTQyODEtYWZlNi1mNWY2Y2Q1ODM1M2QgIn0.JrW0jzlH3f6H-qR45Q3XC0ywSHfFp4Np0YTB8f8CBXpTyAXxjdF3KA_-bvrnjZDBun3zePWC0mbZxtzp0JtLLA",
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.profileDTO)
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(res => {
+          if (res.statusCode === 1000) {
+            window.console.log("User roles updated");
+            regSuccess = true;
+          } else {
+            window.console.log("Error while registration");
+            alert("Error in registration");
+          }
+        })
+        .catch(err => {
+          window.console.log("Error reg: " + err);
+        });
+
+      fetch("http://172.16.20.160:8100/repo/addLogin", {
+        headers: {
+          accessToken:
+            "Bearer " +
+            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGlyYWcxMUBnbWFpbC5jb20iLCJ1c2VySWQiOiIwMTgyOTdlZS1mMTdkLTQyODEtYWZlNi1mNWY2Y2Q1ODM1M2QgIn0.JrW0jzlH3f6H-qR45Q3XC0ywSHfFp4Np0YTB8f8CBXpTyAXxjdF3KA_-bvrnjZDBun3zePWC0mbZxtzp0JtLLA",
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.interestDTO)
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(res => {
+          if (res.statusCode === 1000) {
+            window.console.log("pritesh hit");
+            regSuccess = true;
+          } else {
+            window.console.log("Error whilehitting pritesh");
+            alert("Error in registration");
+          }
+        })
+        .catch(err => {
+          window.console.log("Error reg: " + err);
+        });
+
+      // window.console.log("Selected: " + JSON.stringify(selectedInterest));
+
+      regSuccess = true;
+      catSuccess = true;
+
+      if (regSuccess && catSuccess) {
+        this.$router.push({ path: "/user" });
+      } else {
+        alert("Regisration failed");
+      }
+      // this.$router.push({ path: "/login" });
     }
+  },
+  created() {
+    fetch("http://172.16.20.83:8080/ads/categories")
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.myTags = result;
+        window.console.log("result: " + result);
+        window.console.log("My Tags: " + this.myTags);
+      })
+      .catch(err => {
+        window.console.log("Error getting tags: " + err);
+      });
   }
 };
 </script>
@@ -79,5 +227,17 @@ export default {
   text-align: center;
   margin: 20vh auto;
   width: 40%;
+}
+.aTag {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+}
+.aTag:hover {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+  background: rgb(190, 223, 255);
+  cursor: pointer;
 }
 </style>

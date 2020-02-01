@@ -19,15 +19,26 @@
         </li>
       </ul>
     </div>
-    <div class="center-cont">
+    <div v-if="!cat" class="center-cont">
       <h1>Some popular stories for Specific user</h1>
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
-      <UserPost />
+      <UserPost
+        v-for="(question, index) in questionList"
+        v-bind:key="index"
+        :question_prop="question"
+      />
     </div>
+
+    <div v-if="cat" class="center-cont">
+      <h1>User specific Categories</h1>
+      <v-row
+        class="small-category"
+        v-for="(category, index) in categoryList"
+        v-bind:key="index"
+      >
+        <Category :category="category" />
+      </v-row>
+    </div>
+
     <div id="simpleModal" class="modal">
       <div class="modal-content">
         <span id="closeBtn" @click="closeModal">&times; </span>
@@ -62,15 +73,64 @@
 
 <script>
 import UserPost from "../components/UserPost";
+import Category from "../components/Category";
 export default {
   name: "home",
   components: {
-    UserPost
+    UserPost,
+    Category
   },
   data: function() {
     return {
-      selected: false
+      selected: false,
+      cat: false,
+      questionList: [],
+      categoryList: [
+        {
+          name: "Literature"
+        },
+        {
+          name: "Lifestyle(Brands)"
+        },
+        {
+          name: "Movies"
+        },
+        {
+          name: "Coding"
+        },
+        {
+          name: "Booze"
+        },
+        {
+          name: "Cartoon"
+        },
+        {
+          name: "Cricket"
+        },
+        {
+          name: "Web/TV Series"
+        },
+        {
+          name: "Politics"
+        },
+        {
+          name: "Food"
+        }
+      ]
     };
+  },
+  created() {
+    fetch("http://10.177.68.235:8080/questions/getAllQuestions", {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.questionList = result.content;
+        window.console.log("My data: " + result.content);
+      });
+
   },
 
   methods: {
