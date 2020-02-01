@@ -3,8 +3,8 @@
     <v-row>
         <v-col lg="1"></v-col>
       <v-col lg="9">
-        <router-link :to="{ path: '/categorypage/'+category.name}">
-          <h2 class="cat-name">{{ category.name }}</h2>
+        <router-link :to="{ path: '/categorypage/'+category.interestName}">
+          <h2 class="cat-name">{{ category.interestName }}</h2>
         </router-link>
       </v-col>
       <v-col lg="2">
@@ -18,7 +18,7 @@
 export default {
   methods:{
     follow_cat() {
-      alert("Following: "+ this.category.name)
+      alert("Following: "+ this.category.interestName)
     }
   },
   props: {

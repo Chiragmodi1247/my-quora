@@ -7,10 +7,7 @@
         </v-avatar>
       </v-col>
       <v-col lg="8">
-        <h3>My small profile view</h3>
-
-        Some more desc here. My answer might be disturbing to some. I have been
-        looking forward
+        <h3>{{mydata.name}}</h3>
       </v-col>
       <v-col lg="2">
         <button class="btn_send">
@@ -31,6 +28,9 @@ export default {
     my_card() {
       alert("You clicked icon");
     }
+  },
+  props: {
+    mydata: Object
   }
 };
 </script>

@@ -1,10 +1,34 @@
 <template>
   <v-app>
-    <v-app-bar v-if="isLogged" app color="mywhite">
+    <v-app-bar v-if="!isLogged" app color="mywhite">
       <v-row>
         <v-col lg="1"> </v-col>
         <v-col lg="1">
           <router-link to="/">
+            <button>
+              <h2 style="color: rgb(192, 0, 0);">Quora</h2>
+            </button>
+          </router-link>
+        </v-col>
+        <v-col lg="6">
+          <input type="text" id="search_text" v-model="search_text" v-on:keyup="search" class="input-box" />
+        </v-col>
+        <v-col lg="3"> </v-col>
+        <v-col lg="1">
+          <router-link to="/login">
+            <button class="login-btn">
+              <h2>Login</h2>
+            </button>
+          </router-link>
+        </v-col>
+      </v-row>
+    </v-app-bar>
+
+    <v-app-bar v-if="isLogged" app color="mywhite">
+      <v-row>
+        <v-col lg="1"> </v-col>
+        <v-col lg="1">
+          <router-link to="/user">
             <button>
               <h2 style="color: rgb(192, 0, 0);">Quora</h2>
             </button>
@@ -21,54 +45,12 @@
         <v-col lg="1">
           <router-link to="/login">
             <button class="login-btn">
-              <h2>Login</h2>
+              <h2>Logout</h2>
             </button>
           </router-link>
         </v-col>
       </v-row>
-
-      <!-- <h2 style="color: rgb(192, 0, 0);">Quora</h2>
-      <v-spacer></v-spacer>
-<div>
-  <input type="text" class="input-box" >
-</div>
-<v-btn color="secondary">Search</v-btn>
-      <v-spacer></v-spacer>
-<v-btn color="secondary">LogOut</v-btn> -->
     </v-app-bar>
-
-    <!-- <v-app-bar v-if="!isLogged" app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Login</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar> -->
 
     <v-content class="my-content">
       <router-view />
@@ -85,9 +67,8 @@ export default {
   components: {
     // HelloWorld,
   },
-
   data: () => ({
-    isLogged: true,
+    isLogged: false,
     search_text: null,
     haveNotification: false,
   }),
@@ -105,6 +86,10 @@ export default {
     openNotification: function() {
       this.$router.push({path: '/notifications'})
     }
+  },
+  created() {
+    if(localStorage.getItem("quora-token"))
+    this.isLogged = true;
   }
 };
 </script>

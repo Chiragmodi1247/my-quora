@@ -11,7 +11,12 @@
           <span class="mdi mdi-email icon_size"></span>
         </v-col>
         <v-col lg="1">
-          <input type="email" v-model="loginDTO.emailAddress" class="input_box" placeholder="Email..." />
+          <input
+            type="email"
+            v-model="loginDTO.emailAddress"
+            class="input_box"
+            placeholder="Email..."
+          />
         </v-col>
       </v-row>
       <v-row>
@@ -20,7 +25,12 @@
           <span class="mdi mdi-lock icon_size"></span>
         </v-col>
         <v-col lg="1">
-          <input type="password" v-model="loginDTO.password" class="input_box" placeholder="Password" />
+          <input
+            type="password"
+            v-model="loginDTO.password"
+            class="input_box"
+            placeholder="Password"
+          />
         </v-col>
       </v-row>
       <v-row>
@@ -130,7 +140,14 @@ export default {
       },
       loginDTO: {
         emailAddress: null,
-        password: null
+        password: null,
+        channel: "Quora"
+      },
+      basicProfileDTO: {
+        userId: "018297ee-f17d-4281-afe6-f5f6cd58353d",
+        name: "chirag1",
+        emailAddress: "chirag11@gmail.com",
+        password: "123456"
       }
     };
   },
@@ -152,11 +169,15 @@ export default {
         .then(res => {
           if (res.statusCode === 1000) {
             window.console.log("User Logged");
-            localStorage.setItem("quora-token", res.data)
-            // this.$router.push({ path: "/registration" });
+            localStorage.setItem("quora-token", res.data.accessToken);
+            if (res.data.profile === "") {
+              alert("Please select a profile");
+              this.$router.push({ path: "/registration" });
+            } else {
+              this.$router.push({ path: "/user" });
+            }
           } else {
-            window.console.log("Error while registration");
-            alert("Error in registration");
+            window.console.log("invalid credentials");
           }
         })
         .catch(err => {
@@ -199,6 +220,20 @@ export default {
           if (res.statusCode === 1000) {
             window.console.log("User registered");
             this.forLogin = !this.forLogin;
+            this.basicProfileDTO = res.data;
+            window.console.log("New user id: "+ res.data.userId)
+
+            fetch("/backend/profile/basicDetails", {
+              headers: {
+                "Content-Type": "application/json"
+              },
+              method: "POST",
+              body: JSON.stringify(this.basicProfileDTO)
+            })
+              .then(window.console.log("User registered in local"))
+              .catch(err => {
+                window.console.log("error registering to local: " + err);
+              });
           } else {
             window.console.log("Error while registration");
             alert("Error in registration");
@@ -207,7 +242,6 @@ export default {
         .catch(err => {
           window.console.log("Error reg: " + err);
         });
-
     }
   }
 };

@@ -70,9 +70,19 @@ export default {
         channel: "Quora"
       },
       interestDTO: {
-        tag: ["movie","song"],
+        tag: null,
         channel: "Quora",
         action: "login"
+      },
+      extraDetails: {
+        category: null,
+        profile: null,
+        channel: "Quora",
+        role: null
+      },
+      smallInterest: {
+        interestId: null,
+        interestName: null
       }
     };
   },
@@ -80,6 +90,8 @@ export default {
     selectPublic: function() {
       this.profileDTO.profile = "Public";
       this.profileDTO.role = "Non Moderator";
+      this.extraDetails.profile = "Public";
+      this.extraDetails.role = "Non Moderator";
       window.console.log(
         "profileDTO: " + this.profileDTO.profile + " " + this.profileDTO.role
       );
@@ -87,6 +99,8 @@ export default {
     selectPrivate: function() {
       this.profileDTO.profile = "Private";
       this.profileDTO.role = "Moderator";
+      this.extraDetails.profile = "Private";
+      this.extraDetails.role = "Moderator";
       window.console.log(
         "profileDTO: " + this.profileDTO.profile + " " + this.profileDTO.role
       );
@@ -106,27 +120,34 @@ export default {
         return;
       }
 
-      // let inputList = document.getElementsByClassName("my-checkbox");
-      // let numChecked = 0;
-      // let selectedInterest = new Array();
+      let inputList = document.getElementsByClassName("my-checkbox");
+      let numChecked = 0;
+      let selectedInterest = new Array();
+      let customInterestList = new Array();
+      for (var i = 0; i < inputList.length; i++) {
+        if (inputList[i].type == "checkbox" && inputList[i].checked) {
+          numChecked = numChecked + 1;
+          selectedInterest.push(inputList[i].value);
+          let customInterest = new Object();
+          customInterest.interestId = inputList[i].value;
+          customInterest.interestName = inputList[i].value;
 
-      // for (var i = 0; i < inputList.length; i++) {
-      //   if (inputList[i].type == "checkbox" && inputList[i].checked) {
-      //     numChecked = numChecked + 1;
-      //     selectedInterest.push(inputList[i].value);
-      //   }
-      // }
+          // eslint-disable-next-line no-debugger
+          debugger;
+          customInterestList.push(customInterest);
+        }
+      }
 
-      // if (numChecked < 2) {
-      //   alert("Select minimum 2 categories");
-      //   return;
-      // }
-      // this.interestDTO.tag = selectedInterest;
+      if (numChecked < 2) {
+        alert("Select minimum 2 categories");
+        return;
+      }
+      this.interestDTO.tag = selectedInterest;
+      this.extraDetails.category = customInterestList;
+
       fetch("http://172.16.20.121:8080/roleController/userRole", {
         headers: {
-          accessToken:
-            "Bearer " +
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGlyYWcxMUBnbWFpbC5jb20iLCJ1c2VySWQiOiIwMTgyOTdlZS1mMTdkLTQyODEtYWZlNi1mNWY2Y2Q1ODM1M2QgIn0.JrW0jzlH3f6H-qR45Q3XC0ywSHfFp4Np0YTB8f8CBXpTyAXxjdF3KA_-bvrnjZDBun3zePWC0mbZxtzp0JtLLA",
+          "Authorization": "Bearer " + localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
@@ -150,9 +171,7 @@ export default {
 
       fetch("http://172.16.20.160:8100/repo/addLogin", {
         headers: {
-          accessToken:
-            "Bearer " +
-            "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGlyYWcxMUBnbWFpbC5jb20iLCJ1c2VySWQiOiIwMTgyOTdlZS1mMTdkLTQyODEtYWZlNi1mNWY2Y2Q1ODM1M2QgIn0.JrW0jzlH3f6H-qR45Q3XC0ywSHfFp4Np0YTB8f8CBXpTyAXxjdF3KA_-bvrnjZDBun3zePWC0mbZxtzp0JtLLA",
+          accessToken: "Bearer " + localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
@@ -164,7 +183,7 @@ export default {
         .then(res => {
           if (res.statusCode === 1000) {
             window.console.log("pritesh hit");
-            regSuccess = true;
+            catSuccess = true;
           } else {
             window.console.log("Error whilehitting pritesh");
             alert("Error in registration");
@@ -174,10 +193,20 @@ export default {
           window.console.log("Error reg: " + err);
         });
 
-      // window.console.log("Selected: " + JSON.stringify(selectedInterest));
+      fetch("/backend/profile/extraDetails", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.extraDetails)
+      })
+        .catch(err => {
+          window.console.log("Error in role registration local: " + err);
+        });
 
-      regSuccess = true;
-      catSuccess = true;
+      window.console.log("Riya: " + regSuccess + " Pritesh: " + catSuccess);
+      // window.console.log("Selected: " + JSON.stringify(selectedInterest));
 
       if (regSuccess && catSuccess) {
         this.$router.push({ path: "/user" });
@@ -188,7 +217,7 @@ export default {
     }
   },
   created() {
-    fetch("http://172.16.20.83:8080/ads/categories")
+    fetch("http://172.16.20.83:8080/ads/tags")
       .then(res => {
         return res.json();
       })

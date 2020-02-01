@@ -130,7 +130,7 @@ export default {
     }
   },
   created() {
-    fetch("http://10.177.68.235:8080/questions/getAllQuestions", {
+    fetch("/backend/questions/getAllQuestions", {
       method: "GET"
     })
       .then(res => {

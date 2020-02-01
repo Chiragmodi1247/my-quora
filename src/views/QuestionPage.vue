@@ -33,7 +33,7 @@ export default {
   },
   created() {
 // window.console.log("http://10.177.68.235:8080/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`)
-    fetch("http://10.177.68.235:8080/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`, {
+    fetch("/backend/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`, {
       method: "GET"
     })
       .then(res => {
