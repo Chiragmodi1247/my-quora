@@ -63,7 +63,31 @@
 export default {
   data: function() {
     return {
-      myTags: [],
+      myTags: [
+        "fiction",
+        "non-fiction",
+        "poetry",
+        "short stories",
+        "Bollywood",
+        "Hollywood",
+        "Tollywood",
+        "Punjaabi",
+        "Coding",
+        "Android",
+        "iOS",
+        "NorthIndian",
+        "SouthIndian",
+        "Italian",
+        "Chinese",
+        "Clothing",
+        "Footwear",
+        "Watches",
+        "Accessories",
+        "Football",
+        "Cricket",
+        "Badminton",
+        "Tennis"
+      ],
       profileDTO: {
         profile: null,
         role: null,
@@ -131,9 +155,6 @@ export default {
           let customInterest = new Object();
           customInterest.interestId = inputList[i].value;
           customInterest.interestName = inputList[i].value;
-
-          // eslint-disable-next-line no-debugger
-          debugger;
           customInterestList.push(customInterest);
         }
       }
@@ -147,7 +168,7 @@ export default {
 
       fetch("http://172.16.20.121:8080/roleController/userRole", {
         headers: {
-          "Authorization": "Bearer " + localStorage.getItem("quora-token"),
+          Authorization: "Bearer " + localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
@@ -200,10 +221,9 @@ export default {
         },
         method: "POST",
         body: JSON.stringify(this.extraDetails)
-      })
-        .catch(err => {
-          window.console.log("Error in role registration local: " + err);
-        });
+      }).catch(err => {
+        window.console.log("Error in role registration local: " + err);
+      });
 
       window.console.log("Riya: " + regSuccess + " Pritesh: " + catSuccess);
       // window.console.log("Selected: " + JSON.stringify(selectedInterest));

@@ -60,12 +60,21 @@
               id="ask_select_option"
               class="cat-select"
             >
-              <option
+              <option value="fiction">fiction</option>
+              <option value="non-fiction">non-fiction</option>
+              <option value="poetry">poetry</option>
+              <option value="short stories">short stories</option>
+              <option value="Bollywood">Bollywood</option>
+              <option value="Hollywood">Hollywood</option>
+              <option value="Tollywood">Tollywood</option>
+              <option value="Punjaabi">Punjaabi</option>
+              <option value="Android">Android</option>
+              <!-- <option
                 v-for="(cat, index) in askCategoryList"
                 :key="index"
                 :value="cat"
                 >{{ cat }}</option
-              >
+              > -->
             </select>
           </v-col>
           <v-col>
@@ -101,6 +110,7 @@ export default {
       questionList: [],
       userCategoryList: [],
       askCategoryList: [],
+      myCategoryList: [],
       selectedCat: null,
       addQDTO: {
         questionValue: null,
@@ -147,8 +157,8 @@ export default {
     };
   },
   created() {
-    // let that = this;
-fetch("/backend/profile/category/", {
+    let that = this;
+    fetch("/backend/profile/category/", {
       headers: {
         token: localStorage.getItem("quora-token"),
         "Content-Type": "application/json"
@@ -165,16 +175,25 @@ fetch("/backend/profile/category/", {
         // axios.get('/backend/questions/getQuestionsOfSelectedCategories', this.userCategoryList)
         // axios({
         //   url:'/backend/questions/getQuestionsOfSelectedCategories',
-        //   method: 'get',        
+        //   method: 'get',
         //   data:this.categoryList
         // })
+      setTimeout(that.fetchTags(), 1000)
+      // setTimeout(that.fetchTags(), 1000)
+        // let sendingObject = new Object;
+        let customInterestList = new Array();
+        for (var i = 0; i < this.userCategoryList.length; i++) {
+          customInterestList.push(this.userCategoryList[i].interestId);
+        }
+        let sendingObject = new Object();
+        sendingObject.categoryIdList = customInterestList;
         fetch("/backend/questions/getQuestionsOfSelectedCategories", {
           headers: {
             token: localStorage.getItem("quora-token"),
             "Content-Type": "application/json"
           },
           method: "POST",
-          body: JSON.stringify(this.userCategoryList)
+          body: JSON.stringify(sendingObject)
         })
           .then(res => {
             return res.json();
@@ -183,26 +202,25 @@ fetch("/backend/profile/category/", {
             this.questionList = result.content;
             window.console.log("My questions: " + result.content);
           })
-          .catch(
-            window.console.log("error in fetching question!")
-          );
-      });
-
-    fetch("http://172.16.20.83:8080/ads/tags")
-      .then(res => {
-        return res.json();
-      })
-      .then(result => {
-        this.askCategoryList = result;
-        window.console.log("result: " + result);
-        // window.console.log("My Tags: " + this.askCategoryList);
-      })
-      .catch(err => {
-        window.console.log("Error getting tags: " + err);
+          .catch(window.console.log("error in fetching question!"));
       });
   },
 
   methods: {
+    fetchTags() {
+      fetch("http://172.16.20.83:8080/ads/tags")
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          this.askCategoryList = result;
+          window.console.log("result: " + result);
+          // window.console.log("My Tags: " + this.askCategoryList);
+        })
+        .catch(err => {
+          window.console.log("Error getting tags: " + err);
+        });
+    },
     ask_on_enter() {
       window.console.log("Ask on enter called");
     },
@@ -237,7 +255,9 @@ fetch("/backend/profile/category/", {
         method: "POST",
         body: JSON.stringify(this.addQDTO)
       }).catch(window.console.log("error adding question"));
-      alert("Question: " + newQ.value + " on cat: " + this.selectedCat);
+      // alert("Question: " + newQ.value + " on cat: " + this.selectedCat);
+      let modal = document.getElementById("simpleModal");
+      modal.style.display = "none";
     }
   }
 };
