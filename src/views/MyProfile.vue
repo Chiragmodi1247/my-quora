@@ -74,12 +74,20 @@
       </div>
       <div v-if="feed.followers">
         <h1 style="color: black">My followers here</h1>
-        <SmallProfile v-for="(follower,index) in myFollowers" :key="index" :mydata="follower"/>
+        <SmallProfile
+          v-for="(follower, index) in myFollowers"
+          :key="index"
+          :mydata="follower"
+        />
       </div>
 
       <div v-if="feed.followings">
         <h1 style="color: black">My followings here</h1>
-        <SmallProfile v-for="(following,index) in myFollowings" :key="index" :mydata="following"/>
+        <SmallProfile
+          v-for="(following, index) in myFollowings"
+          :key="index"
+          :mydata="following"
+        />
       </div>
     </div>
   </div>
@@ -150,9 +158,45 @@ export default {
       ]
     };
   },
+  methods: {
+    getFollowers: function() {
+      fetch("/backend/profile/follower", {
+        method: "GET",
+        headers: {
+          token: localStorage.getItem("quora-token")
+        }
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          this.myFollowers = result;
+          window.console.log("follower: " + result);
+        });
+    },
+    getFollowings: function() {
+      fetch("/backend/profile/following", {
+        method: "GET",
+        headers: {
+          token: localStorage.getItem("quora-token")
+        }
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          this.myFollowings = result;
+          window.console.log("followings: " + result);
+        });
+    }
+  },
   created() {
-    fetch("http://172.16.20.119:8080/profile/profile/320", {
-      method: "GET"
+    let that = this;
+    fetch("/backend/profile/profile", {
+      method: "GET",
+      headers: {
+        token: localStorage.getItem("quora-token")
+      }
     })
       .then(res => {
         return res.json();
@@ -162,30 +206,9 @@ export default {
         window.console.log("Details: " + result);
       });
 
-    fetch("http://172.16.20.119:8080/profile/follower/320", {
-      method: "GET"
-    })
-      .then(res => {
-        return res.json();
-      })
-      .then(result => {
-        this.myFollowers = result;
-        window.console.log("Details: " + result);
-      });
-
-    fetch("http://172.16.20.119:8080/profile/following/320", {
-      method: "GET"
-    })
-      .then(res => {
-        return res.json();
-      })
-      .then(result => {
-        this.myFollowings = result;
-        window.console.log("Details: " + result);
-      });
-
-
-}
+    setTimeout(that.getFollowers, 1000);
+    setTimeout(that.getFollowings, 2000);
+  }
 };
 </script>
 

@@ -43,11 +43,9 @@
           <span v-if="haveNotification" class="mdi mdi-bell-outline red_icon_size">2</span>
           </v-col>
         <v-col lg="1">
-          <router-link to="/login">
-            <button class="login-btn">
+            <button @click="logout_user" class="login-btn">
               <h2>Logout</h2>
             </button>
-          </router-link>
         </v-col>
       </v-row>
     </v-app-bar>
@@ -85,7 +83,12 @@ export default {
     },
     openNotification: function() {
       this.$router.push({path: '/notifications'})
-    }
+    },
+    logout_user: function() {
+      localStorage.removeItem("quora-token")
+  window.console.log("User logged out")
+this.$router.push({path: '/'})
+    } 
   },
   created() {
     if(localStorage.getItem("quora-token"))

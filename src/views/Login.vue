@@ -205,7 +205,9 @@ export default {
         return;
       }
       // alert("selected count: " + numChecked);
-
+      // eslint-disable-next-line no-debugger
+      debugger
+  window.console.log("Sending this: "+ this.userDTO)
       fetch("http://172.16.20.121:8080/controller/register", {
         headers: {
           "Content-Type": "application/json"

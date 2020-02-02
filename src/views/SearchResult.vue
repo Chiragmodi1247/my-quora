@@ -57,66 +57,53 @@
         <h1 style="color: black">
           Search results for {{ this.$route.query.searchQuery }}
         </h1>
-        <Category :category="my_category" />
-        <UserAskedQuestion />
-        <SmallProfile />
-        <SmallProfile />
-        <UserAskedQuestion />
-        <UserAskedQuestion />
-        <Category :category="my_category" />
-        <UserAskedQuestion />
+        <div v-for="(result, index) in resultofSearch" :key="index">
+          <SearchCategory v-if="result.valueType === 'C'" :mydata="result" />
+          <SearchAskedQuestion v-if="result.valueType === 'Q'" :mydata="result"/>
+          <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
+        </div>
       </div>
 
       <div v-if="feed.questions">
         <h1 style="color: black">
           Questions: {{ this.$route.query.searchQuery }}
         </h1>
-        <UserAskedQuestion />
-        <UserAskedQuestion />
-        <UserAskedQuestion />
-        <UserAskedQuestion />
-        <UserAskedQuestion />
-        <UserAskedQuestion />
+        <div v-for="(result, index) in resultofSearch" :key="index">
+          <SearchAskedQuestion v-if="result.valueType === 'Q'" :mydata="result"/>
+        </div>
       </div>
       <div v-if="feed.profile">
         <h1 style="color: black">
           Profile: {{ this.$route.query.searchQuery }}
         </h1>
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
-        <SmallProfile />
+        <div v-for="(result, index) in resultofSearch" :key="index">
+          <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
+        </div>
       </div>
 
       <div v-if="feed.category">
         <h1 style="color: black">
           Category: {{ this.$route.query.searchQuery }}
         </h1>
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
-        <Category :category="my_category" />
+        <div v-for="(result, index) in resultofSearch" :key="index">
+          <SearchCategory v-if="result.valueType === 'C'" :mydata="result" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import UserAskedQuestion from "../components/UsersAskedQuestions";
-import SmallProfile from "../components/SmallProfile";
-import Category from "../components/Category";
+import SearchAskedQuestion from "../components/searchAskedQuestion";
+import SearchSmallProfile from "../components/SearchSmallProfile";
+import SearchCategory from "../components/SearchCategory";
 
 export default {
   name: "home",
   components: {
-    UserAskedQuestion,
-    SmallProfile,
-    Category
+    SearchAskedQuestion,
+    SearchSmallProfile,
+    SearchCategory
   },
   data: function() {
     return {
@@ -126,10 +113,28 @@ export default {
         profile: false,
         category: false
       },
+      resultofSearch: [],
       my_category: {
         name: "Literature"
       }
     };
+  },
+  created() {
+    fetch(
+      "http://172.16.20.110:8082/search/searchFunction?keyword=" +
+        this.$route.query.searchQuery,
+      {
+        method: "GET"
+      }
+    )
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.resultofSearch = result.content;
+        window.console.log("My result: " + result);
+      })
+      .catch(window.console.log("Error in searching"));
   }
 };
 </script>
