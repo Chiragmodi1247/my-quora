@@ -2,43 +2,10 @@
   <v-card rounded outlined style="margin-bottom:10px;padding:10px">
     <table>
       <tr>
-        <td>
-          <v-img
-            src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=639&q=80"
-            alt="MyDog"
-            max-width="30px"
-            max-height="30px"
-            style="border-radius: 50%"
-          >
-          </v-img>
-        </td>
-        <td>
-          Some User info who has posted here
-        </td>
-        <td style="float: right">
-          <span class="mdi mdi-dots-vertical"></span>
-        </td>
-      </tr>
-      <tr>
         <td colspan="6">
           <router-link :to="{ path: '/question/' + question_prop.questionId }">
             <h2 style="color: black">{{ question_prop.questionValue }}</h2>
           </router-link>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="1">
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/john.jpg"
-            alt="John"
-            max-width="40px"
-            max-height="40px"
-            style="border-radius: 50%"
-          >
-          </v-img>
-        </td>
-        <td>
-          <p>{{ question_prop.approvedAnswererProfile }}</p>
         </td>
       </tr>
     </table>
@@ -68,54 +35,15 @@
         downCount
       }}
     </tr>
-
-    <v-divider></v-divider>
-    <table>
-      <tr>
-        <td>
-          <v-text-field
-            class="input-box"
-            height="40px"
-            v-on:keyup="send_cmt_enter"
-            @input="enable_ask"
-            background-color="grey lighten-3"
-            placeholder="Write a comment..."
-            :id="newCmtId"
-            rounded
-          ></v-text-field>
-        </td>
-        <td>
-          <button @click="sendCmt" :disabled="!isCommenting" class="btn_send">
-            Send <span class="mdi mdi-send"></span>
-          </button>
-        </td>
-      </tr>
-    </table>
-
-    <table>
-      <tr>
-        <h2>Older Comments</h2>
-      </tr>
-      <tr class="comment_section">
-        <Comment
-          v-for="(comment, index) in commentData"
-          :key="index"
-          :node="comment"
-        />
-      </tr>
-    </table>
   </v-card>
 </template>
 
 <script>
 // @ is an alias to /src
-import Comment from "../components/Comment";
 
 export default {
   name: "Userpost",
-  components: {
-    Comment
-  },
+  components: {},
   data: function() {
     return {
       isCommenting: false,
@@ -124,8 +52,16 @@ export default {
       alreadyDisliked: false,
       upVoted: false,
       downVoted: false,
-      upCount: 20,
-      downCount: 10
+      upCount: this.question_prop.numberOfLikes,
+      downCount: this.question_prop.numberOfDislikes,
+      likeDTO: {
+        questionOrAnswerId: this.question_prop.questionId,
+        askerOrAnswererId: this.question_prop.askerProfileId
+      },
+      disLikeDTO: {
+        questionOrAnswerId: this.question_prop.questionId,
+        askerOrAnswererId: this.question_prop.askerProfileId
+      }
     };
   },
   props: {
@@ -162,14 +98,21 @@ export default {
           this.upCount++;
           this.downCount--;
         }
-      }
-      else{
+      } else {
         if (!this.alreadyLiked) {
           this.upCount++;
         }
       }
       this.alreadyLiked = true;
       this.alreadyDisliked = false;
+      fetch("/backend/questions/addLikes", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "PUT",
+        body: JSON.stringify(this.likeDTO)
+      });
 
       //send to DA
     },
@@ -181,8 +124,7 @@ export default {
           this.upCount--;
           this.downCount++;
         }
-      }
-      else{
+      } else {
         if (!this.alreadyDisliked) {
           this.downCount++;
         }
@@ -190,6 +132,14 @@ export default {
       this.alreadyLiked = false;
       this.alreadyDisliked = true;
       //send to DA
+      fetch("/backend/questions/addDislikes", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "PUT",
+        body: JSON.stringify(this.disLikeDTO)
+      });
     }
   }
 };
@@ -207,7 +157,7 @@ export default {
   background: white;
 }
 .input-box {
-  width: 50vw;
+  width: 40vw;
 }
 .btn_send {
   background: blue;

@@ -37,13 +37,18 @@
         <v-col lg="6">
           <input type="text" id="search_text" v-model="search_text" v-on:keyup="search" class="input-box" />
         </v-col>
-        <v-col lg="2"> </v-col>
+        <v-col lg="1"> </v-col>
         <v-col lg="1" @click="openNotification">
           <span v-if="!haveNotification" class="mdi mdi-bell-outline icon_size"></span>
           <span v-if="haveNotification" class="mdi mdi-bell-outline red_icon_size">2</span>
           </v-col>
         <v-col lg="1">
-            <button @click="logout_user" class="login-btn">
+            <button @click="openProfile" class="profile-btn">
+              <h2>Profile</h2>
+            </button>
+        </v-col>
+        <v-col lg="1">
+            <button @click="logout_user" class="logout-btn">
               <h2>Logout</h2>
             </button>
         </v-col>
@@ -78,11 +83,15 @@ export default {
         else{
          window.console.log("Searched Query: " + this.search_text);
           this.$router.push({path: '/search' , query: { searchQuery : this.search_text }})
+          // this.search_text = null
         }
       }
     },
     openNotification: function() {
       this.$router.push({path: '/notifications'})
+    },
+    openProfile: function() {
+      this.$router.push({path: '/myprofile'})
     },
     logout_user: function() {
       localStorage.removeItem("quora-token")
@@ -90,9 +99,16 @@ export default {
 this.$router.push({path: '/'})
     } 
   },
+  watch: {
+    loginWatch: function() {
+      this.isLogged = localStorage.getItem("quora-token") === "" ? true : false
+    }
+},
   created() {
     if(localStorage.getItem("quora-token"))
     this.isLogged = true;
+    else
+    this.isLogged = false;
   }
 };
 </script>
@@ -107,6 +123,12 @@ this.$router.push({path: '/'})
   font-size: 24pt;
   cursor: pointer;
 }
+.profile-btn {
+  padding: 5px 20px 5px 20px;
+  color: white;
+  border-radius: 5px;
+  background: rgb(0, 123, 223);
+}
 .input-box {
   font-size: 20pt;
   border: 1px solid black;
@@ -116,6 +138,12 @@ this.$router.push({path: '/'})
 }
 .my-content {
   background: rgb(224, 224, 224);
+}
+.logout-btn {
+  padding: 5px 10px 5px 10px;
+  color: white;
+  border-radius: 5px;
+  background: rgb(223, 45, 0);
 }
 .login-btn {
   padding: 5px 20px 5px 20px;

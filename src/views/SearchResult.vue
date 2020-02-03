@@ -38,18 +38,6 @@
             <h2>Profiles</h2>
           </button>
         </li>
-        <li>
-          <button
-            @click="
-              feed.all = false;
-              feed.questions = false;
-              feed.profile = false;
-              feed.category = true;
-            "
-          >
-            <h2>Categories</h2>
-          </button>
-        </li>
       </ul>
     </div>
     <div class="center-cont">
@@ -58,7 +46,6 @@
           Search results for {{ this.$route.query.searchQuery }}
         </h1>
         <div v-for="(result, index) in resultofSearch" :key="index">
-          <SearchCategory v-if="result.valueType === 'C'" :mydata="result" />
           <SearchAskedQuestion v-if="result.valueType === 'Q'" :mydata="result"/>
           <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
         </div>
@@ -79,16 +66,11 @@
         <div v-for="(result, index) in resultofSearch" :key="index">
           <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
         </div>
+        <!-- <div v-for="(result, index) in dummyProfile" :key="index">
+          <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
+        </div> -->
       </div>
 
-      <div v-if="feed.category">
-        <h1 style="color: black">
-          Category: {{ this.$route.query.searchQuery }}
-        </h1>
-        <div v-for="(result, index) in resultofSearch" :key="index">
-          <SearchCategory v-if="result.valueType === 'C'" :mydata="result" />
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -96,14 +78,12 @@
 <script>
 import SearchAskedQuestion from "../components/searchAskedQuestion";
 import SearchSmallProfile from "../components/SearchSmallProfile";
-import SearchCategory from "../components/SearchCategory";
 
 export default {
   name: "home",
   components: {
     SearchAskedQuestion,
     SearchSmallProfile,
-    SearchCategory
   },
   data: function() {
     return {
@@ -111,12 +91,114 @@ export default {
         all: true,
         questions: false,
         profile: false,
-        category: false
+        ques:''
       },
       resultofSearch: [],
       my_category: {
         name: "Literature"
-      }
+      },
+      dummyProfile: [
+        {
+            "profileValue": null,
+            "profileId": null,
+            "profileType": null,
+            "searchId": "4",
+            "valueType": "Q",
+            "questionValue": "Why no great movies, chirag4?",
+            "questionId": null,
+            "questionStatus": null,
+            "askerProfileId": "3ae2e24d-4225-4f44-a391-b3ef2ccf1ee2",
+            "askerProfileName": "chirag4",
+            "numberOfLikes": 0,
+            "numberOfDislikes": 0,
+            "approvedAnswerId": "",
+            "approvedAnswer": null,
+            "approvedAnswererId": null,
+            "approvedAnswererProfile": null,
+            "categoryId": "Bollywood",
+            "categoryName": "Bollywood"
+        },
+        {
+            "profileValue": "chirag10",
+            "profileId": "450dce35-256c-469d-a8f1-71b1a070ac0e",
+            "profileType": "Public",
+            "searchId": "450dce35-256c-469d-a8f1-71b1a070ac0e",
+            "valueType": "P",
+            "questionValue": null,
+            "questionId": null,
+            "questionStatus": null,
+            "askerProfileId": null,
+            "askerProfileName": null,
+            "numberOfLikes": 0,
+            "numberOfDislikes": 0,
+            "approvedAnswerId": null,
+            "approvedAnswer": null,
+            "approvedAnswererId": null,
+            "approvedAnswererProfile": null,
+            "categoryId": null,
+            "categoryName": null
+        },
+        {
+            "profileValue": null,
+            "profileId": null,
+            "profileType": null,
+            "searchId": "8",
+            "valueType": "Q",
+            "questionValue": "Why are there no great movies?",
+            "questionId": null,
+            "questionStatus": null,
+            "askerProfileId": "3ae2e24d-4225-4f44-a391-b3ef2ccf1ee2",
+            "askerProfileName": "chirag4",
+            "numberOfLikes": 0,
+            "numberOfDislikes": 0,
+            "approvedAnswerId": "",
+            "approvedAnswer": null,
+            "approvedAnswererId": null,
+            "approvedAnswererProfile": null,
+            "categoryId": "Bollywood",
+            "categoryName": "Bollywood"
+        },
+        {
+            "profileValue": null,
+            "profileId": null,
+            "profileType": null,
+            "searchId": "1",
+            "valueType": "Q",
+            "questionValue": "who is KRK?",
+            "questionId": "5e36906955fd6276d3a52511",
+            "questionStatus": null,
+            "askerProfileId": "3ae2e24d-4225-4f44-a391-b3ef2ccf1ee2",
+            "askerProfileName": "chirag4",
+            "numberOfLikes": 0,
+            "numberOfDislikes": 0,
+            "approvedAnswerId": "",
+            "approvedAnswer": null,
+            "approvedAnswererId": null,
+            "approvedAnswererProfile": null,
+            "categoryId": "Bollywood",
+            "categoryName": "Bollywood"
+        },
+        {
+            "profileValue": null,
+            "profileId": null,
+            "profileType": null,
+            "searchId": "5",
+            "valueType": "Q",
+            "questionValue": "why someone is boring?",
+            "questionId": null,
+            "questionStatus": null,
+            "askerProfileId": "3ae2e24d-4225-4f44-a391-b3ef2ccf1ee2",
+            "askerProfileName": "chirag4",
+            "numberOfLikes": 0,
+            "numberOfDislikes": 0,
+            "approvedAnswerId": "",
+            "approvedAnswer": null,
+            "approvedAnswererId": null,
+            "approvedAnswererProfile": null,
+            "categoryId": "non-fiction",
+            "categoryName": "non-fiction"
+        }
+      ]
     };
   },
   created() {
@@ -132,8 +214,10 @@ export default {
       })
       .then(result => {
         this.resultofSearch = result.content;
-        window.console.log("My result: " + result);
-      })
+        window.console.log("My result: " + result.content[0].questionValue);
+        this.ques = this.result[0].questionValue;
+        
+    })
       .catch(window.console.log("Error in searching"));
   }
 };

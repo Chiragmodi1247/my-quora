@@ -10,20 +10,20 @@
       <v-col lg="7" style="color: white">
         <br /><br /><br />
         <v-row>
-          <h1>Someone's Public name here</h1>
+          <h1>{{profile.name}}</h1>
         </v-row>
         <v-row>
           My some basic description here
         </v-row>
         <v-row>
-          <v-col lg="4">
+          <!-- <v-col lg="4">
             Followers: 10k
           </v-col>
           <v-col lg="4">
             Following: 20
-          </v-col>
+          </v-col> -->
           <v-col lg="4">
-            Level: Gold
+            Level: {{profile.level}}
           </v-col>
         </v-row>
       </v-col>
@@ -43,6 +43,9 @@ export default {
     send_request: function() {
       alert("Request to user send, wait to reply")
     }
+  },
+  props: {
+    profile: Object
   }
 };
 </script>

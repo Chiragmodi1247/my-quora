@@ -7,12 +7,9 @@
         </v-avatar>
       </v-col>
       <v-col lg="8">
-        <h3>{{mydata.name}}</h3>
-      </v-col>
-      <v-col lg="2">
-        <button class="btn_send">
-          Follow <span class="mdi mdi-account-plus"></span>
-        </button>
+        <router-link :to="{ path: '/profile/' + profile.userId }">
+        <h3>{{profile.name}}</h3>
+        </router-link>
       </v-col>
     </v-row>
   </v-card>
@@ -22,7 +19,7 @@
 // @ is an alias to /src
 
 export default {
-  name: "GuestPost",
+  name: "smallProfile",
   components: {},
   methods: {
     my_card() {
@@ -30,7 +27,7 @@ export default {
     }
   },
   props: {
-    mydata: Object
+    profile: Object
   }
 };
 </script>

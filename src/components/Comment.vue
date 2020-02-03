@@ -49,9 +49,11 @@
 
     <div v-if="expanded">
       <Comment
-        v-for="(child, index) in node.children"
+        v-for="(comment, index) in commentData"
         :key="index"
-        :node="child"
+        :node="comment"
+        :likes="comment.likes"
+        :dislikes="comment.dislikes"
         :depth="depth + 1"
       />
     </div>
@@ -63,8 +65,8 @@ export default {
   name: "Comment",
   data: function() {
     return {
-      upCount: this.node.like,
-      downCount: this.node.dislike,
+      upCount: this.likes,
+      downCount: this.dislikes,
       upVoted: false,
       downVoted: false,
       expanded: false,
@@ -72,7 +74,13 @@ export default {
       alreadyDisliked: false,
       reply_oncomment: false,
       isCommenting: false,
-      myCmtId: this.node.id
+      myCmtId: this.node.commentId,
+      commentData: null,
+      sendCommentDTO: {
+        parentId: this.node.commentId,
+        comment: null,
+        questionOrAnswerUserId: this.node.questionOrAnswerUserId
+      }
     };
   },
   methods: {
@@ -87,6 +95,20 @@ export default {
         window.console.log("No comments");
         return;
       }
+
+      this.sendCommentDTO.comment = cmt.value;
+
+      fetch("/backend/comment/addComment", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.sendCommentDTO)
+      })
+        .then(window.console.log("Comment added"))
+        .catch(window.console.log("Error in Comment adding"));
+
       window.console.log(
         "Added comment: " + cmt.value + " on level: " + this.depth
       );
@@ -119,6 +141,14 @@ export default {
       this.alreadyDisliked = false;
       window.console.log("liked called");
       //send to DA
+
+      fetch("/backend/comment/addLike/" + this.myCmtId, {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST"
+      });
     },
     disliked() {
       this.upVoted = false;
@@ -137,14 +167,40 @@ export default {
       this.alreadyDisliked = true;
       window.console.log("disliked called");
       //send to DA
+      fetch("/backend/comment/addDislike/" + this.myCmtId, {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST"
+      });
     }
   },
   props: {
     node: Object,
+    likes: Number,
+    dislikes: Number,
     depth: {
       type: Number,
       default: 1
     }
+  },
+  created() {
+    fetch("/backend/comment/getComment/" + this.node.commentId + "/0/2", {
+      headers: {
+        token: localStorage.getItem("quora-token"),
+        "Content-Type": "application/json"
+      },
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.commentData = result.data.content;
+        window.console.log("Comment fetched");
+      })
+      .catch(window.console.log("error in Comment fetched"));
   }
 };
 </script>
@@ -153,7 +209,6 @@ export default {
 .input-box {
   width: 50vw;
 }
-
 .btn_send {
   background: rgb(0, 0, 173);
   color: white;

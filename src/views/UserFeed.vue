@@ -1,29 +1,35 @@
 <template>
   <div>
     <div class="left-div">
-      <button @click="openModal" class="login-btn">
-        <h2>Ask Question</h2>
-      </button>
+      <div class="my_nav">
+        <button @click="openModal" class="login-btn">
+          <h2>Ask Question</h2>
+        </button>
 
-      <ul>
-        <li>
-          <button @click="cat = false">
-            <h2>Home</h2>
-          </button>
-        </li>
+        <ul>
+          <li>
+            <button @click="cat = false">
+              <h2>Home</h2>
+            </button>
+          </li>
 
-        <li>
-          <button @click="cat = true">
-            <h2>Categories</h2>
-          </button>
-        </li>
-      </ul>
+          <li>
+            <button @click="cat = true">
+              <h2>Categories</h2>
+            </button>
+          </li>
+        </ul>
+      </div>
+<div class="ads" >
+      <Ad v-for="(ad, index) in myAdds" :key="index" :myAd="ad" />
+</div>
     </div>
+
     <div v-if="!cat" class="center-cont">
       <h1>Some popular stories for Specific user</h1>
       <UserPost
-        v-for="(question, index) in questionList"
-        v-bind:key="index"
+        v-for="(question, qindex) in questionList"
+        v-bind:key="qindex"
         :question_prop="question"
       />
     </div>
@@ -32,7 +38,7 @@
       <h1>User specific Categories</h1>
       <v-row
         class="small-category"
-        v-for="(category, index) in userCategoryList"
+        v-for="(category, index) in askCategoryList"
         v-bind:key="index"
       >
         <Category :category="category" />
@@ -60,21 +66,12 @@
               id="ask_select_option"
               class="cat-select"
             >
-              <option value="fiction">fiction</option>
-              <option value="non-fiction">non-fiction</option>
-              <option value="poetry">poetry</option>
-              <option value="short stories">short stories</option>
-              <option value="Bollywood">Bollywood</option>
-              <option value="Hollywood">Hollywood</option>
-              <option value="Tollywood">Tollywood</option>
-              <option value="Punjaabi">Punjaabi</option>
-              <option value="Android">Android</option>
-              <!-- <option
+              <option
                 v-for="(cat, index) in askCategoryList"
                 :key="index"
                 :value="cat"
                 >{{ cat }}</option
-              > -->
+              >
             </select>
           </v-col>
           <v-col>
@@ -95,12 +92,14 @@
 <script>
 // const axios = require('axios').default;
 import UserPost from "../components/UserPost";
+import Ad from "../components/ad";
 import Category from "../components/Category";
 export default {
   name: "home",
   components: {
     UserPost,
-    Category
+    Category,
+    Ad
   },
   data: function() {
     return {
@@ -112,15 +111,17 @@ export default {
       askCategoryList: [],
       myCategoryList: [],
       selectedCat: null,
+      myAdds: [],
       addQDTO: {
-        questionValue: null,
-        categoryId: null,
-        categoryName: null,
+        questionValue: "",
+        categoryId: "",
+        categoryName: "",
+
         // askerProfileId: null,
         // askerProfileName: null,
-        profileWhereAskedId: null,
-        profileWhereAskedName: null,
-        profileWhereAskedType: "Public"
+        profileWhereAskedId: "",
+        profileWhereAskedName: "",
+        profileWhereAskedType: ""
       },
       categoryList: [
         {
@@ -171,16 +172,8 @@ export default {
       })
       .then(result => {
         this.userCategoryList = result;
-        window.console.log("My data: " + result[1].interestName);
-        // axios.get('/backend/questions/getQuestionsOfSelectedCategories', this.userCategoryList)
-        // axios({
-        //   url:'/backend/questions/getQuestionsOfSelectedCategories',
-        //   method: 'get',
-        //   data:this.categoryList
-        // })
-      setTimeout(that.fetchTags(), 1000)
-      // setTimeout(that.fetchTags(), 1000)
-        // let sendingObject = new Object;
+        window.console.log("My data 12345: " + result[1].interestName);
+        setTimeout(that.fetchTags(), 1000);
         let customInterestList = new Array();
         for (var i = 0; i < this.userCategoryList.length; i++) {
           customInterestList.push(this.userCategoryList[i].interestId);
@@ -200,20 +193,44 @@ export default {
           })
           .then(result => {
             this.questionList = result.content;
-            window.console.log("My questions: " + result.content);
+            window.console.log("My questions: " + result.content[0].questionValue);
           })
           .catch(window.console.log("error in fetching question!"));
       });
+
+setTimeout(this.fetchTags, 1000)
+
+    fetch(
+      "http://172.16.20.83:8080/ads/getAds/" +
+        localStorage.getItem("quora-token"),
+      {
+        method: "GET"
+      }
+    )
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.myAdds = result;
+        this.myAdds.splice(2)
+        window.console.log("Adds fetched" + result);
+      })
+      .catch(window.console.log("error fetching adds"));
   },
 
   methods: {
     fetchTags() {
+      let that = this;
       fetch("http://172.16.20.83:8080/ads/tags")
         .then(res => {
           return res.json();
         })
         .then(result => {
-          this.askCategoryList = result;
+        for (var i = 0; i < result.length; i++) {
+          let cust = new Object;
+          cust.interestName = result[i];
+          that.askCategoryList.push(cust);
+        }
           window.console.log("result: " + result);
           // window.console.log("My Tags: " + this.askCategoryList);
         })
@@ -271,6 +288,10 @@ export default {
   border: 1px solid black;
 }
 
+.ads {
+  left: 72%;
+  position: fixed;
+}
 .asking_new_question_onprofile {
   background: rgb(233, 233, 233);
   width: 100%;
@@ -301,6 +322,7 @@ export default {
 
 .left-div {
   text-align: center;
+  display: block;
   padding: 20px;
   width: 20%;
   margin-top: 30px;
@@ -310,7 +332,7 @@ export default {
   left: 2%;
 }
 .center-cont {
-  width: 60vw;
+  width: 50vw;
   left: 20%;
   position: relative;
   z-index: 1;
