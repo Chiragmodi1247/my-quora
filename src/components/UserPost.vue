@@ -46,6 +46,12 @@ export default {
   components: {},
   data: function() {
     return {
+      DADTO: {
+        channel: "Quora",
+        tag: this.category,
+        action: null
+      },
+
       isCommenting: false,
       newCmtId: this.question_prop.questionId,
       alreadyLiked: false,
@@ -65,7 +71,8 @@ export default {
     };
   },
   props: {
-    question_prop: Object
+    question_prop: Object,
+    category: String
   },
   methods: {
     enable_ask() {
@@ -115,6 +122,15 @@ export default {
       });
 
       //send to DA
+      this.DADTO.action = "like";
+      fetch("http://172.16.20.160:8100/repo/add", {
+        headers: {
+          accessToken: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.DADTO)
+      });
     },
     disliked() {
       this.upVoted = false;
@@ -132,6 +148,18 @@ export default {
       this.alreadyLiked = false;
       this.alreadyDisliked = true;
       //send to DA
+
+      this.DADTO.action = "dislike";
+      fetch("http://172.16.20.160:8100/repo/add", {
+        headers: {
+          accessToken: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.DADTO)
+      });
+
+
       fetch("/backend/questions/addDislikes", {
         headers: {
           token: localStorage.getItem("quora-token"),

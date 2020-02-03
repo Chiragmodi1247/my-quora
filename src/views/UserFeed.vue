@@ -70,7 +70,7 @@
                 v-for="(cat, index) in askCategoryList"
                 :key="index"
                 :value="cat"
-                >{{ cat }}</option
+                >{{ cat.interestName }}</option
               >
             </select>
           </v-col>

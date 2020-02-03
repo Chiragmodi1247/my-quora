@@ -46,7 +46,7 @@
           Search results for {{ this.$route.query.searchQuery }}
         </h1>
         <div v-for="(result, index) in resultofSearch" :key="index">
-          <SearchAskedQuestion v-if="result.valueType === 'Q'" :mydata="result"/>
+          <SearchAskedQuestion v-if="result.valueType === 'Q'" :mydata="result" />
           <SearchSmallProfile v-if="result.valueType === 'P'" :mydata="result"/>
         </div>
       </div>

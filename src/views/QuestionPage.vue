@@ -44,15 +44,12 @@
               @click="selected = true"
               class="cat-select"
             >
-              <option value="fiction">fiction</option>
-              <option value="non-fiction">non-fiction</option>
-              <option value="poetry">poetry</option>
-              <option value="short stories">short stories</option>
-              <option value="Bollywood">Bollywood</option>
-              <option value="Hollywood">Hollywood</option>
-              <option value="Tollywood">Tollywood</option>
-              <option value="Punjaabi">Punjaabi</option>
-              <option value="Android">Android</option>
+              <option
+                v-for="(cat, index) in askCategoryList"
+                :key="index"
+                :value="cat"
+                >{{ cat.interestName }}</option
+              >
             </select>
           </v-col>
           <v-col>
@@ -105,6 +102,7 @@ export default {
         tag: null,
         action: null
       },
+      askCategoryList: [],
       addQDTO: {
         questionValue: "",
         categoryId: null,
@@ -130,6 +128,26 @@ export default {
     };
   },
   methods: {
+    fetchTags() {
+      let that = this;
+      fetch("http://172.16.20.83:8080/ads/tags")
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          for (var i = 0; i < result.length; i++) {
+            let cust = new Object();
+            cust.interestName = result[i];
+            that.askCategoryList.push(cust);
+          }
+          window.console.log("result: " + result);
+          // window.console.log("My Tags: " + this.askCategoryList);
+        })
+        .catch(err => {
+          window.console.log("Error getting tags: " + err);
+        });
+    },
+
     enable_ask() {
       if (this.answerDTO.answerValue.length === 0) this.txtInput = false;
       else this.txtInput = true;
@@ -264,6 +282,8 @@ export default {
       });
 
     setTimeout(this.getCategory, 1000);
+    setTimeout(this.fetchTags, 2000)
+
   }
 };
 </script>

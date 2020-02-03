@@ -302,7 +302,8 @@ export default {
     };
   },
   props: {
-    question_prop: Object
+    question_prop: Object,
+    category: String
   }
 };
 </script>
