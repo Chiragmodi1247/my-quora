@@ -124,9 +124,12 @@ export default {
       alreadyDisliked: false,
       upVoted: false,
       downVoted: false,
-      upCount: 20,
-      downCount: 10
-    };
+      upCount: this.question_prop.numberOfLikes,
+      downCount: this.question_prop.numberOfDislikes,
+      likeDTO: {
+        questionOrAnswerId: this.question_prop.questionId
+      }
+          };
   },
   props: {
     question_prop: Object
@@ -162,14 +165,28 @@ export default {
           this.upCount++;
           this.downCount--;
         }
-      }
-      else{
+      } else {
         if (!this.alreadyLiked) {
           this.upCount++;
         }
       }
       this.alreadyLiked = true;
       this.alreadyDisliked = false;
+
+      fetch("/addlike/", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "PUT",
+        body: JSON.stringify(this.likeDTO)
+      })
+        .then(res => {
+          window.console.log("Like send to local: " + res);
+        })
+        .catch(err => {
+          window.console.log("error in local like: " + err);
+        });
 
       //send to DA
     },
@@ -181,8 +198,7 @@ export default {
           this.upCount--;
           this.downCount++;
         }
-      }
-      else{
+      } else {
         if (!this.alreadyDisliked) {
           this.downCount++;
         }
@@ -190,7 +206,22 @@ export default {
       this.alreadyLiked = false;
       this.alreadyDisliked = true;
       //send to DA
-    }
+      fetch("/addDislike/", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.likeDTO)
+      })
+        .then(res => {
+          window.console.log("Dislike send to local: " + res);
+        })
+        .catch(err => {
+          window.console.log("error in local dislike: " + err);
+        });
+
+}
   }
 };
 </script>
@@ -207,7 +238,7 @@ export default {
   background: white;
 }
 .input-box {
-  width: 50vw;
+  width: 40vw;
 }
 .btn_send {
   background: blue;

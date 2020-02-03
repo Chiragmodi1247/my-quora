@@ -129,6 +129,20 @@ export default {
         "profileDTO: " + this.profileDTO.profile + " " + this.profileDTO.role
       );
     },
+
+    registerExtraDetails() {
+      fetch("/backend/profile/extraDetails", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.extraDetails)
+      }).catch(err => {
+        window.console.log("Error in role registration local: " + err);
+      });
+    },
+
     registerUser: function() {
       let regSuccess = false;
       let catSuccess = false;
@@ -192,7 +206,7 @@ export default {
 
       fetch("http://172.16.20.160:8100/repo/addLogin", {
         headers: {
-          accessToken: "Bearer " + localStorage.getItem("quora-token"),
+          accessToken: localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
@@ -214,25 +228,17 @@ export default {
           window.console.log("Error reg: " + err);
         });
 
-      fetch("/backend/profile/extraDetails", {
-        headers: {
-          token: localStorage.getItem("quora-token"),
-          "Content-Type": "application/json"
-        },
-        method: "POST",
-        body: JSON.stringify(this.extraDetails)
-      }).catch(err => {
-        window.console.log("Error in role registration local: " + err);
-      });
+      setTimeout(this.registerExtraDetails,1000)
 
       window.console.log("Riya: " + regSuccess + " Pritesh: " + catSuccess);
       // window.console.log("Selected: " + JSON.stringify(selectedInterest));
 
-      if (regSuccess && catSuccess) {
-        this.$router.push({ path: "/user" });
-      } else {
-        alert("Regisration failed");
-      }
+      this.$router.push({ path: "/user" });
+      // if (regSuccess && catSuccess) {
+      //   this.$router.push({ path: "/user" });
+      // } else {
+      //   alert("Regisration failed");
+      // }
       // this.$router.push({ path: "/login" });
     }
   },

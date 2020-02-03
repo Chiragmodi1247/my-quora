@@ -7,10 +7,12 @@
         </v-avatar>
       </v-col>
       <v-col lg="8">
-        <h3>{{mydata.profileValue}}</h3>
+        <router-link :to="{ path: '/profile/' + mydata.profileId }">
+          <h3>{{ mydata.profileValue }}</h3>
+        </router-link>
       </v-col>
       <v-col lg="2">
-        <button class="btn_send">
+        <button :disabled="isFollowing" @click="sendRequest" class="btn_send">
           Follow <span class="mdi mdi-account-plus"></span>
         </button>
       </v-col>
@@ -24,13 +26,53 @@
 export default {
   name: "GuestPost",
   components: {},
+  data: function() {
+    return {
+      isFollowing: false
+    };
+  },
   methods: {
     my_card() {
       alert("You clicked icon");
+    },
+    sendRequest() {
+      fetch("/backend/profile/addFollower/" + this.mydata.profileId, {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "PUT"
+      })
+        .then(
+          window.console.log("Following now!")
+        )
+
+          this.isFollowing = true;
+
+
     }
   },
   props: {
     mydata: Object
+  },
+  created() {
+    fetch("/backend/profile/isFollowing/" + this.mydata.profileId, {
+      headers: {
+        token: localStorage.getItem("quora-token"),
+        "Content-Type": "application/json"
+      },
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        window.console.log("Res in isFollowing: " + result.isFollowing);
+        if (result.isFollowing === "true") {
+          this.isFollowing = true;
+          window.console.log("Isfol called");
+        }
+      });
   }
 };
 </script>
@@ -52,6 +94,11 @@ export default {
 .btn_send {
   background: blue;
   color: white;
+  padding: 5px 20px 5px 20px;
+  border-radius: 5px;
+}
+.btn_send:disabled {
+  background: rgb(192, 192, 192);
   padding: 5px 20px 5px 20px;
   border-radius: 5px;
 }

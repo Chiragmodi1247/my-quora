@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="my-profile">
-      <ProfileBox />
+      <ProfileBox :profile="profile" />
     </div>
     <div v-if="canSee">
       <div class="left-div">
@@ -93,20 +93,12 @@
         </div>
         <div v-if="feed.followers">
           <h1 style="color: black">My followers here</h1>
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
+          <SmallProfile v-for="(follower,index) in listOfFollowers" :key="index" :profile="follower"/>
         </div>
 
         <div v-if="feed.followings">
           <h1 style="color: black">My followings here</h1>
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
-          <SmallProfile />
+          <SmallProfile v-for="(following,index) in listOfFollowings" :key="index" :profile="following"/>
         </div>
       </div>
     </div>
@@ -134,6 +126,9 @@ export default {
         followers: false,
         followings: false
       },
+      profile: {},
+      listOfFollowers: [],
+      listOfFollowings: [],
       selected: false,
       txtselected: false,
       canSee: true,
@@ -184,7 +179,50 @@ export default {
         this.txtselected = true;
       }
       if (que.value.length === 0) this.txtselected = false;
+    },
+    getFollowers() {
+      fetch("/backend/profile/getFollower/" + this.$route.params.id, {
+        method: "GET"
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          this.listOfFollowers = result;
+          window.console.log("Result listof followers: " + result);
+        })
+        .catch(window.console.log("error in listof followers"));
+    },
+    getFollowings() {
+      fetch("/backend/profile/getFollowing/" + this.$route.params.id, {
+        method: "GET"
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+this.listOfFollowings = result;
+          window.console.log("Result listof followings: " + result);
+        })
+        .catch(window.console.log("error in listof followings"));
     }
+  },
+  created() {
+    fetch("/backend/profile/getProfile/" + this.$route.params.id, {
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        this.profile = result;
+        window.console.log("Result profile: " + result);
+      })
+      .catch(window.console.log("error in profile"));
+
+setTimeout(this.getFollowers,1000)
+setTimeout(this.getFollowings,2000)
+
   }
 };
 </script>

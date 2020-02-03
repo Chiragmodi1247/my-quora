@@ -13,7 +13,13 @@ module.exports = {
         ws: true,
         changeOrigin: true,
         pathRewrite: {'^/backend' : ''}
-      }
+      },
+      '^/report': {
+        target: 'http://172.16.20.161:8090/',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {'^/report' : ''}
+      },
     }
   },
   lintOnSave: true

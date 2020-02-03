@@ -3,8 +3,8 @@
     <table>
       <tr>
         <td colspan="6">
-          <router-link :to="{ path: '/question/' + question_prop.id }">
-            <h2 style="color: black">{{ question_prop.question }}</h2>
+          <router-link :to="{ path: '/question/' + mydata.questionId }">
+            <h2 style="color: black">{{ mydata.questionValue }}</h2>
           </router-link>
         </td>
         <td style="float: right">
@@ -23,9 +23,7 @@
           </v-img>
         </td>
         <td>
-          Some more desc here. My answer might be disturbing to some. I have
-          been looking forward to writing this for a long time, but couldn’t had
-          a job and my mom was
+          Some more desc here.
         </td>
       </tr>
     </table>
@@ -38,10 +36,7 @@
             to writing this for a long time, but couldn’t muster up the courage
             as it was very hurtful and disturbing to me.I was born in India and
             brought up in a middle class family. My dad had a job and my mom was
-            a home maker. My mom gave birth to me and my brother via C-Section
-            and she suffers from severe back pain due to the complications she
-            suffered during the surgeries. I was born prematurely at 7.5 months,
-            My answer might be disturbing to some.
+            a home maker.
           </p>
         </div>
       </tr>
@@ -168,18 +163,42 @@ export default {
       this.alreadyDisliked = true;
       window.console.log("disliked called");
       //send to DA
+
+      fetch("/report/supportAgent/createTicket", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.dislikeDTO)
+      })
+        .then(window.console.log("Dislike send to CRM"))
+        .catch(window.console.log("Error in dislike"));
     }
   },
+  props: {
+    mydata: Object
+  },
+
   data: function() {
     return {
-      upCount: 10,
-      downCount: 5,
+      dislikeDTO: {
+        postId: "abcd1234",
+        postDescription: this.mydata.questionValue,
+        counterOfDislikes: this.mydata.numberOfDislikes+1,
+        postImageUrl: null,
+        postVideoUrl: null,
+        userId: this.mydata.askerProfileId,
+        source: "qoura"
+      },
+      upCount: this.mydata.numberOfLikes,
+      downCount: this.mydata.numberOfDislikes,
       upVoted: false,
       downVoted: false,
       alreadyLiked: false,
       alreadyDisliked: false,
       isCommenting: false,
-      newCmtId: this.question_prop.id,
+      newCmtId: this.mydata.id,
       commentData: [
         {
           comment:
@@ -300,9 +319,6 @@ export default {
         }
       ]
     };
-  },
-  props: {
-    question_prop: Object
   }
 };
 </script>

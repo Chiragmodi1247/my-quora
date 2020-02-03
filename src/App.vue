@@ -43,7 +43,7 @@
           <span v-if="haveNotification" class="mdi mdi-bell-outline red_icon_size">2</span>
           </v-col>
         <v-col lg="1">
-            <button @click="logout_user" class="login-btn">
+            <button @click="logout_user" class="logout-btn">
               <h2>Logout</h2>
             </button>
         </v-col>
@@ -90,9 +90,16 @@ export default {
 this.$router.push({path: '/'})
     } 
   },
+  watch: {
+    loginWatch: function() {
+      this.isLogged = localStorage.getItem("quora-token") === "" ? true : false
+    }
+},
   created() {
     if(localStorage.getItem("quora-token"))
     this.isLogged = true;
+    else
+    this.isLogged = false;
   }
 };
 </script>
@@ -116,6 +123,12 @@ this.$router.push({path: '/'})
 }
 .my-content {
   background: rgb(224, 224, 224);
+}
+.logout-btn {
+  padding: 5px 10px 5px 10px;
+  color: white;
+  border-radius: 5px;
+  background: rgb(223, 45, 0);
 }
 .login-btn {
   padding: 5px 20px 5px 20px;
