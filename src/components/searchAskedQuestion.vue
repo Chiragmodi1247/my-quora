@@ -7,37 +7,13 @@
             <h2 style="color: black">{{ mydata.questionValue }}</h2>
           </router-link>
         </td>
-        <td style="float: right">
-          <span class="mdi mdi-dots-vertical"></span>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="1">
-          <v-img
-            src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=639&q=80"
-            alt="MyDog"
-            max-width="40px"
-            max-height="40px"
-            style="border-radius: 50%"
-          >
-          </v-img>
-        </td>
-        <td>
-          Some more desc here.
-        </td>
       </tr>
     </table>
 
     <table>
       <tr>
         <div class="ans">
-          <p>
-            My answer might be disturbing to some. I have been looking forward
-            to writing this for a long time, but couldn’t muster up the courage
-            as it was very hurtful and disturbing to me.I was born in India and
-            brought up in a middle class family. My dad had a job and my mom was
-            a home maker.
-          </p>
+          <p>{{ mydata.approvedAnswer }}</p>
         </div>
       </tr>
       <tr>
@@ -70,7 +46,7 @@
             @input="enable_ask"
             background-color="grey lighten-3"
             placeholder="Write a comment..."
-            :id="newCmtId"
+            v-model="sendCommentDTO.comment"
             rounded
           ></v-text-field>
         </td>
@@ -88,6 +64,8 @@
           v-for="(comment, index) in commentData"
           :key="index"
           :node="comment"
+          :likes="comment.likes"
+          :dislikes="comment.dislikes"
         />
       </tr>
     </table>
@@ -107,17 +85,19 @@ export default {
       alert("You clicked icon");
     },
     enable_ask() {
-      let cmt = document.getElementById(this.newCmtId);
-      if (cmt.value.length !== 0) this.isCommenting = true;
-      if (cmt.value.length === 0) this.isCommenting = false;
+      if (this.sendCommentDTO.comment !== 0) this.isCommenting = true;
     },
     sendCmt() {
-      let cmt = document.getElementById(this.newCmtId);
-      if (cmt.value.length === 0) {
-        window.console.log("No comments");
-        return;
-      }
-      window.console.log("Added comment: " + cmt.value + " on level: 0");
+      fetch("/backend/comment/addComment", {
+        headers: {
+          token: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.sendCommentDTO)
+      })
+        .then(window.console.log("Comment added"))
+        .catch(window.console.log("Error in Comment adding"));
     },
     send_cmt_enter: function(e) {
       let cmt = document.getElementById(this.newCmtId);
@@ -185,12 +165,18 @@ export default {
       dislikeDTO: {
         postId: "abcd1234",
         postDescription: this.mydata.questionValue,
-        counterOfDislikes: this.mydata.numberOfDislikes+1,
+        counterOfDislikes: this.mydata.numberOfDislikes + 1,
         postImageUrl: null,
         postVideoUrl: null,
         userId: this.mydata.askerProfileId,
         source: "qoura"
       },
+      sendCommentDTO: {
+        parentId: this.mydata.questionId,
+        comment: null,
+        questionOrAnswerUserId: this.mydata.askerProfileId
+      },
+
       upCount: this.mydata.numberOfLikes,
       downCount: this.mydata.numberOfDislikes,
       upVoted: false,
@@ -199,126 +185,26 @@ export default {
       alreadyDisliked: false,
       isCommenting: false,
       newCmtId: this.mydata.id,
-      commentData: [
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 45,
-          id: "111",
-          dislike: 20,
-          children: [
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 15,
-              id: "112",
-              dislike: 10,
-              children: [
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  like: 0,
-                  id: "113",
-                  dislike: 0
-                },
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  like: 5,
-                  id: "114",
-                  dislike: 20
-                }
-              ]
-            },
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 35,
-              id: "115",
-              dislike: 20
-            }
-          ]
-        },
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 5,
-          id: "116",
-          dislike: 3,
-          children: [
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 45,
-              id: "117",
-              dislike: 20,
-              children: [
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  like: 45,
-                  id: "118",
-                  dislike: 20
-                },
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  like: 45,
-                  id: "119",
-                  dislike: 20
-                }
-              ]
-            },
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              id: "120",
-              like: 45,
-              dislike: 20
-            }
-          ]
-        },
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 0,
-          id: "121",
-          dislike: 0,
-          children: [
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 45,
-              id: "122",
-              dislike: 20,
-              children: [
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  id: "123",
-                  like: 45,
-                  dislike: 20
-                },
-                {
-                  comment:
-                    "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-                  id: "124",
-                  like: 45,
-                  dislike: 20
-                }
-              ]
-            },
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 45,
-              id: "125",
-              dislike: 20
-            }
-          ]
-        }
-      ]
+      commentData: []
     };
+  },
+  created() {
+    let that = this;
+    fetch("/backend/comment/getComment/" + this.mydata.questionId + "/0/2", {
+      headers: {
+        token: localStorage.getItem("quora-token"),
+        "Content-Type": "application/json"
+      },
+      method: "GET"
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(result => {
+        that.commentData = result.data.content;
+        window.console.log("Comment fetched");
+      })
+      .catch(window.console.log("error in Comment fetched"));
   }
 };
 </script>

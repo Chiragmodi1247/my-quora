@@ -77,7 +77,7 @@
         <SmallProfile
           v-for="(follower, index) in myFollowers"
           :key="index"
-          :mydata="follower"
+          :profile="follower"
         />
       </div>
 
@@ -86,7 +86,7 @@
         <SmallProfile
           v-for="(following, index) in myFollowings"
           :key="index"
-          :mydata="following"
+          :profile="following"
         />
       </div>
     </div>

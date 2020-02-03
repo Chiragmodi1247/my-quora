@@ -180,6 +180,9 @@ export default {
       }
       if (que.value.length === 0) this.txtselected = false;
     },
+    getQuestions() {
+
+    },
     getFollowers() {
       fetch("/backend/profile/getFollower/" + this.$route.params.id, {
         method: "GET"

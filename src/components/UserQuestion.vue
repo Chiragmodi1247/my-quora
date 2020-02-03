@@ -70,12 +70,14 @@
 
     <h2>Older Comments</h2>
 
-    <table>
-      <tr class="comment_section">
+    <table class="comment_section">
+      <tr >
         <Comment
           v-for="(comment, index) in commentData"
           :key="index"
           :node="comment"
+          :likes="comment.likes"
+          :dislikes="comment.dislikes"
         />
       </tr>
     </table>
@@ -92,8 +94,18 @@ export default {
   },
   data() {
     return {
+      DADTO: {
+        channel: "Quora",
+        tag: this.category,
+        action: null
+      },
       upCount: this.ans.numberOfLikes,
       downCount: this.ans.numberOfDislikes,
+      upVoted: false,
+      downVoted: false,
+      alreadyLiked: false,
+      alreadyDisliked: false,
+
       sendCommentDTO: {
         parentId: this.ans.answerId,
         comment: null,
@@ -101,51 +113,13 @@ export default {
       },
       likeDTO: {
         questionOrAnswerId: this.ans.answerId,
-        askerOrAnswererId: this.ans.profileIdOfAnswerer,
+        askerOrAnswererId: this.ans.profileIdOfAnswerer
       },
       disLikeDTO: {
         questionOrAnswerId: this.ans.answerId,
-        askerOrAnswererId: this.ans.profileIdOfAnswerer,
+        askerOrAnswererId: this.ans.profileIdOfAnswerer
       },
-      commentData: [
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 45,
-          id: "111",
-          dislike: 20,
-          children: [
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 15,
-              id: "112",
-              dislike: 10
-            },
-            {
-              comment:
-                "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-              like: 35,
-              id: "115",
-              dislike: 20
-            }
-          ]
-        },
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 5,
-          id: "116",
-          dislike: 3
-        },
-        {
-          comment:
-            "My answer might be disturbing to some. I have been looking forward to writing this for a long time, but couldn’t muster up the courage as it",
-          like: 0,
-          id: "121",
-          dislike: 0
-        }
-      ]
+      commentData: []
     };
   },
   methods: {
@@ -168,7 +142,6 @@ export default {
       this.alreadyLiked = true;
       this.alreadyDisliked = false;
       window.console.log("liked called");
-      //send to DA
 
       fetch("/backend/answers/addLikes", {
         headers: {
@@ -177,6 +150,17 @@ export default {
         },
         method: "PUT",
         body: JSON.stringify(this.likeDTO)
+      });
+
+      //send to DA
+      this.DADTO.action = "like";
+      fetch("http://172.16.20.160:8100/repo/add", {
+        headers: {
+          accessToken: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.DADTO)
       });
     },
     disliked() {
@@ -204,8 +188,16 @@ export default {
         body: JSON.stringify(this.disLikeDTO)
       });
 
-
-//send to DA
+      //send to DA
+      this.DADTO.action = "dislike";
+      fetch("http://172.16.20.160:8100/repo/add", {
+        headers: {
+          accessToken: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.DADTO)
+      });
     },
     sendCmt() {
       fetch("/backend/comment/addComment", {
@@ -221,10 +213,12 @@ export default {
     }
   },
   props: {
-    ans: Object
+    ans: Object,
+    category: String
   },
   created() {
-    fetch("/backend/comment/getComment/" + this.ans.answerId, {
+    let that = this;
+    fetch("/backend/comment/getComment/" + this.ans.answerId + "/0/2", {
       headers: {
         token: localStorage.getItem("quora-token"),
         "Content-Type": "application/json"
@@ -235,7 +229,7 @@ export default {
         return res.json();
       })
       .then(result => {
-        this.commentData = result.data.content;
+        that.commentData = result.data.content;
         window.console.log("Comment fetched");
       })
       .catch(window.console.log("error in Comment fetched"));
@@ -249,7 +243,8 @@ export default {
 }
 .comment_section {
   background: rgb(224, 224, 224);
-  border-radius: 20px;
+  border-radius: 10px;
+  width: 55vw
 }
 
 .my-post-box {

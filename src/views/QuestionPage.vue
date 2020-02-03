@@ -9,7 +9,7 @@
     </div>
     <div class="center-cont">
       <h1 style="color: black">
-        {{ questionValue }} 
+        {{ questionValue }}
       </h1>
 
       <button class="answer-btn" @click="openModal">
@@ -18,7 +18,12 @@
         </h2>
       </button>
 
-      <UserQuestion v-for="(ans, index) in answers" :key="index" :ans="ans" />
+      <UserQuestion
+        v-for="(ans, index) in answers"
+        :key="index"
+        :ans="ans"
+        :category="selectedQCat"
+      />
     </div>
 
     <div id="questionModal" class="modal">
@@ -71,7 +76,7 @@
             v-model="answerDTO.answerValue"
             @input="enable_ask"
             class="asking_new_question_onprofile"
-            placeholder="Ask a question"
+            placeholder="Answer this question"
           ></textarea>
         </v-row>
         <v-row>
@@ -98,7 +103,7 @@ export default {
       DADTO: {
         channel: "Quora",
         tag: null,
-        action: null,
+        action: null
       },
       addQDTO: {
         questionValue: "",
@@ -106,18 +111,19 @@ export default {
         categoryName: null,
         // askerProfileId: null,
         // askerProfileName: null,
-        profileWhereAskedId:"",
+        profileWhereAskedId: "",
         profileWhereAskedName: "",
         profileWhereAskedType: ""
       },
       selected: false,
+      selectedQCat: null,
       questionID: this.$route.params.id,
       questionValue: null,
       newQuestionValue: null,
       selectedCat: null,
       answerDTO: {
         answerValue: null,
-        questionId: this.$route.params.id,
+        questionId: this.$route.params.id
       },
       txtInput: false,
       answers: []
@@ -155,8 +161,12 @@ export default {
       window.console.log("Asnwer: " + this.answerDTO.answerValue);
       let modal = document.getElementById("simpleModal");
       modal.style.display = "none";
-      this.DADTO.tag = this.selectedCat;
+
+      //fecth from ananya
+      this.DADTO.tag = this.selectedQCat;
       this.DADTO.action = "answer";
+
+      //add answer
       fetch("/backend/answers/addAnswer", {
         headers: {
           token: localStorage.getItem("quora-token"),
@@ -169,7 +179,37 @@ export default {
         .catch(err => {
           window.console.log("Error adding answer: " + err);
         });
+
+      //sending to DA
+      fetch("http://172.16.20.160:8100/repo/add", {
+        headers: {
+          accessToken: localStorage.getItem("quora-token"),
+          "Content-Type": "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify(this.DADTO)
+      });
     },
+
+    getCategory() {
+      let that = this;
+      fetch(
+        "/backend/questions/getCategoryByQuestionId/" + this.$route.params.id,
+        {
+          headers: {
+            token: localStorage.getItem("quora-token"),
+            "Content-Type": "application/json"
+          }
+        }
+      )
+        .then(res => {
+          return res.json();
+        })
+        .then(result => {
+          that.selectedQCat = result.categoryId;
+        });
+    },
+
     askToProfile() {
       this.addQDTO.questionValue = this.newQuestionValue;
       this.addQDTO.categoryId = this.selectedCat;
@@ -177,40 +217,34 @@ export default {
       this.DADTO.tag = this.selectedCat;
       this.DADTO.action = "post";
 
-
       fetch("/backend/questions/addQuestion", {
         headers: {
           token: localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
-        body: JSON.stringify(this.addQDTO)
+        body: JSON.stringify(this.DADTO)
       })
         .then(window.console.log("Success adding question"))
         .catch(window.console.log("error adding question"));
       // alert("Question: " + newQ.value + " on cat: " + this.selectedCat);
 
-    fetch("",{
+      fetch("http://172.16.20.160:8100/repo/add", {
         headers: {
-          token: localStorage.getItem("quora-token"),
+          accessToken: localStorage.getItem("quora-token"),
           "Content-Type": "application/json"
         },
         method: "POST",
-        body: JSON.stringify(this.addQDTO)
-    })
+        body: JSON.stringify(this.DADTO)
+      });
 
-
-
-let modal = document.getElementById("questionModal");
+      let modal = document.getElementById("questionModal");
       modal.style.display = "none";
       this.newQuestionValue = null;
-
-
-
-}
+    }
   },
   created() {
-    window.console.log(this.questionID)
+    window.console.log(this.questionID);
     // window.console.log("http://10.177.68.235:8080/answers/getAllAnswersOfAQuestion?questionId="+`${this.questionID}`)
     fetch(
       "/backend/answers/getAllAnswersOfAQuestion?questionId=" +
@@ -224,9 +258,12 @@ let modal = document.getElementById("questionModal");
       })
       .then(result => {
         this.questionValue = result.content[0].question;
+
         this.answers = result.content;
         window.console.log("My data: " + result.content[0].question);
       });
+
+    setTimeout(this.getCategory, 1000);
   }
 };
 </script>

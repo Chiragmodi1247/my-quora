@@ -19,7 +19,7 @@
 // @ is an alias to /src
 
 export default {
-  name: "GuestPost",
+  name: "smallProfile",
   components: {},
   methods: {
     my_card() {

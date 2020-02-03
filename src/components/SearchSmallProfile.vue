@@ -56,6 +56,7 @@ export default {
     mydata: Object
   },
   created() {
+    let that = this;
     fetch("/backend/profile/isFollowing/" + this.mydata.profileId, {
       headers: {
         token: localStorage.getItem("quora-token"),
@@ -69,7 +70,7 @@ export default {
       .then(result => {
         window.console.log("Res in isFollowing: " + result.isFollowing);
         if (result.isFollowing === "true") {
-          this.isFollowing = true;
+          that.isFollowing = true;
           window.console.log("Isfol called");
         }
       });
